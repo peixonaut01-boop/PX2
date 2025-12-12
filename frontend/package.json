@@ -1,0 +1,45 @@
+{
+  "name": "frontend",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "cms:dev": "npx decap-server"
+  },
+  "dependencies": {
+    "@supabase/ssr": "^0.8.0",
+    "@supabase/supabase-js": "^2.86.2",
+    "embla-carousel-react": "^8.6.0",
+    "gray-matter": "^4.0.3",
+    "groq-sdk": "^0.37.0",
+    "katex": "^0.16.25",
+    "next": "^16.0.7",
+    "react": "19.2.0",
+    "react-dom": "19.2.0",
+    "recharts": "^3.5.1",
+    "rehype-katex": "^7.0.0",
+    "rehype-raw": "^7.0.0",
+    "rehype-stringify": "^10.0.0",
+    "remark": "^15.0.1",
+    "remark-html": "^16.0.1",
+    "remark-math": "^6.0.0",
+    "remark-rehype": "^11.0.0",
+    "rss-parser": "^3.13.0",
+    "yahoo-finance2": "^3.10.2"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@tailwindcss/typography": "^0.5.19",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "decap-server": "^3.4.0",
+    "eslint": "^9",
+    "eslint-config-next": "16.0.3",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  }
+}

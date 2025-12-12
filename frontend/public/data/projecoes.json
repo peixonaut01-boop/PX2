@@ -1,0 +1,62 @@
+{
+  "metadata": {
+    "last_updated": "2025-12-06T14:00:00",
+    "updated_by": "sistema"
+  },
+  "indicadores": {
+    "IPCA": { "nome": "IPCA", "unidade": "%", "categoria": "Inflação BR", "tipo": "mensal" },
+    "IPCA15": { "nome": "IPCA-15", "unidade": "%", "categoria": "Inflação BR", "tipo": "mensal" },
+    "IPCA_ADM": { "nome": "IPCA Administrados", "unidade": "%", "categoria": "Inflação BR", "tipo": "mensal" },
+    "INPC": { "nome": "INPC", "unidade": "%", "categoria": "Inflação BR", "tipo": "mensal" },
+    "IGP_M": { "nome": "IGP-M", "unidade": "%", "categoria": "Inflação BR", "tipo": "mensal" },
+    
+    "PIB": { "nome": "PIB", "unidade": "%", "categoria": "Atividade BR", "tipo": "trimestral" },
+    "IBC_BR": { "nome": "IBC-Br", "unidade": "%", "categoria": "Atividade BR", "tipo": "mensal" },
+    "PIM": { "nome": "Produção Industrial", "unidade": "%", "categoria": "Atividade BR", "tipo": "mensal" },
+    "PMC": { "nome": "Vendas no Varejo", "unidade": "%", "categoria": "Atividade BR", "tipo": "mensal" },
+    "PMS": { "nome": "Volume de Serviços", "unidade": "%", "categoria": "Atividade BR", "tipo": "mensal" },
+    
+    "SELIC": { "nome": "Taxa Selic", "unidade": "% a.a.", "categoria": "Juros", "tipo": "reuniao" },
+    "FED_FUNDS": { "nome": "Fed Funds Rate", "unidade": "% a.a.", "categoria": "Juros", "tipo": "reuniao" },
+    "ECB_RATE": { "nome": "Taxa BCE", "unidade": "% a.a.", "categoria": "Juros", "tipo": "reuniao" },
+    "BOE_RATE": { "nome": "Taxa BoE (UK)", "unidade": "% a.a.", "categoria": "Juros", "tipo": "reuniao" },
+    "BOJ_RATE": { "nome": "Taxa BoJ (Japão)", "unidade": "% a.a.", "categoria": "Juros", "tipo": "reuniao" },
+    
+    "CAMBIO": { "nome": "Câmbio BRL/USD", "unidade": "R$/US$", "categoria": "Externo BR", "tipo": "mensal" },
+    
+    "RESULTADO_PRIMARIO": { "nome": "Resultado Primário", "unidade": "% PIB", "categoria": "Fiscal BR", "tipo": "mensal" },
+    "RESULTADO_PRIMARIO_SUB": { "nome": "Resultado Primário Subnacionais", "unidade": "% PIB", "categoria": "Fiscal BR", "tipo": "mensal" },
+    "RESULTADO_NOMINAL": { "nome": "Resultado Nominal", "unidade": "% PIB", "categoria": "Fiscal BR", "tipo": "mensal" },
+    "DIVIDA_LIQUIDA": { "nome": "Dívida Líquida", "unidade": "% PIB", "categoria": "Fiscal BR", "tipo": "mensal" },
+    "DIVIDA_BRUTA": { "nome": "Dívida Bruta", "unidade": "% PIB", "categoria": "Fiscal BR", "tipo": "mensal" },
+    "ARRECADACAO": { "nome": "Arrecadação Federal", "unidade": "R$ bi", "categoria": "Fiscal BR", "tipo": "mensal" },
+    "ARRECADACAO_ICMS": { "nome": "Arrecadação ICMS", "unidade": "R$ bi", "categoria": "Fiscal BR", "tipo": "mensal" },
+    "RECEITA_LIQUIDA": { "nome": "Receita Líquida Gov. Central", "unidade": "R$ bi", "categoria": "Fiscal BR", "tipo": "mensal" },
+    "DESPESA_TOTAL": { "nome": "Despesa Total Gov. Central", "unidade": "R$ bi", "categoria": "Fiscal BR", "tipo": "mensal" },
+    "DESPESA_GOV": { "nome": "Despesa Total Governo", "unidade": "R$ bi", "categoria": "Fiscal BR", "tipo": "mensal" },
+    
+    "CAGED": { "nome": "CAGED", "unidade": "mil vagas", "categoria": "Emprego BR", "tipo": "mensal" },
+    "PO": { "nome": "População Ocupada", "unidade": "milhões", "categoria": "Emprego BR", "tipo": "mensal" },
+    "DESEMPREGO_BR": { "nome": "Taxa Desemprego BR", "unidade": "%", "categoria": "Emprego BR", "tipo": "mensal" },
+    
+    "BALANCA_COMERCIAL": { "nome": "Balança Comercial", "unidade": "US$ bi", "categoria": "Externo BR", "tipo": "mensal" },
+    "CONTA_CORRENTE": { "nome": "Conta Corrente", "unidade": "US$ bi", "categoria": "Externo BR", "tipo": "mensal" },
+    "IDP": { "nome": "Investimento Direto no País", "unidade": "US$ bi", "categoria": "Externo BR", "tipo": "mensal" },
+    
+    "CPI_EUA": { "nome": "CPI EUA", "unidade": "%", "categoria": "Inflação EUA", "tipo": "mensal" },
+    "CORE_CPI_EUA": { "nome": "Core CPI EUA", "unidade": "%", "categoria": "Inflação EUA", "tipo": "mensal" },
+    "PCE_EUA": { "nome": "PCE EUA", "unidade": "%", "categoria": "Inflação EUA", "tipo": "mensal" },
+    "PAYROLL_EUA": { "nome": "Payroll EUA", "unidade": "mil vagas", "categoria": "Atividade EUA", "tipo": "mensal" },
+    "DESEMPREGO_EUA": { "nome": "Desemprego EUA", "unidade": "%", "categoria": "Atividade EUA", "tipo": "mensal" },
+    "PIM_EUA": { "nome": "Produção Industrial EUA", "unidade": "%", "categoria": "Atividade EUA", "tipo": "mensal" },
+    
+    "CPI_EUR": { "nome": "CPI Zona Euro", "unidade": "%", "categoria": "Inflação EUR", "tipo": "mensal" },
+    "CORE_CPI_EUR": { "nome": "Core CPI Zona Euro", "unidade": "%", "categoria": "Inflação EUR", "tipo": "mensal" },
+    "DESEMPREGO_EUR": { "nome": "Desemprego Europa", "unidade": "%", "categoria": "Atividade EUR", "tipo": "mensal" },
+    "PIM_EUR": { "nome": "Produção Industrial Europa", "unidade": "%", "categoria": "Atividade EUR", "tipo": "mensal" }
+  },
+  "projecoes_px": {},
+  "projecoes_mercado": {},
+  "projecoes_anuais_px": {},
+  "projecoes_anuais_mercado": {}
+}

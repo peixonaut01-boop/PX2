@@ -1,0 +1,231 @@
+┌────────────────────────────────────────────────────────────────────┐
+│                   📊 ESTRUTURA R - PX ECONOMICS                    │
+└────────────────────────────────────────────────────────────────────┘
+
+📁 scripts/R/
+│
+├── 🚀 INICIO_AQUI.R          ← COMECE AQUI! Menu interativo
+├── 📖 README_R.md            ← Documentação completa
+├── 🌳 ESTRUTURA.txt          ← Este arquivo
+│
+├── ⚙️  CONFIGURAÇÃO
+│   ├── config.R              ← Paths e configurações
+│   └── utils.R               ← Funções úteis
+│
+├── 📝 TEMPLATES (Copie e edite)
+│   └── templates/
+│       └── template_simples.R    ← Template básico para novos indicadores
+│
+├── 🔄 WORKFLOWS (Exemplos prontos)
+│   └── workflows/
+│       └── exemplo_completo.R    ← 5 exemplos de uso
+│
+├── 📊 ATUALIZADORES (Scripts de atualização)
+│   ├── ipca_update.R         ← Atualizar IPCA
+│   ├── ipca15_update.R       ← Atualizar IPCA-15
+│   └── run_all.R             ← Atualizar todos
+│
+└── 📥 DATA_INPUT (Opcional - coloque seus Excel aqui)
+    └── data_input/
+
+┌────────────────────────────────────────────────────────────────────┐
+│                        🎯 FLUXO DE TRABALHO                        │
+└────────────────────────────────────────────────────────────────────┘
+
+1️⃣  SETUP INICIAL
+    ↓
+    source("INICIO_AQUI.R")      # Primeiro uso - verificar tudo
+    
+2️⃣  APRENDER
+    ↓
+    Ler README_R.md              # Documentação
+    source("workflows/exemplo_completo.R")  # Ver exemplos
+
+3️⃣  CRIAR NOVO INDICADOR
+    ↓
+    file.copy("templates/template_simples.R", "meu_indicador.R")
+    # Editar meu_indicador.R (3 seções marcadas [EDITAR])
+    source("meu_indicador.R")
+
+4️⃣  ATUALIZAR DADOS
+    ↓
+    source("ipca_update.R")      # Atualizar IPCA
+    source("ipca15_update.R")    # Atualizar IPCA-15
+
+5️⃣  DEPLOY
+    ↓
+    git add frontend/public/data/*.json
+    git commit -m "chore: update data"
+    git push origin main
+
+┌────────────────────────────────────────────────────────────────────┐
+│                      📋 FUNÇÕES ÚTEIS DISPONÍVEIS                  │
+└────────────────────────────────────────────────────────────────────┘
+
+📥 LEITURA
+├── read_excel_sheet(file, sheet, day=1)     # Ler Excel e formatar datas
+├── format_date_for_json(dates, day=1)       # Formatar datas
+└── parse_portuguese_date("janeiro 2024")    # Converter datas em PT
+
+🧹 LIMPEZA
+├── clean_for_json(df)                       # Remover NaN/Inf
+└── df_to_records(df)                        # DataFrame → Lista JSON
+
+💾 SALVAR
+└── save_indicator_json(data, path, name, desc)  # Salvar JSON completo
+
+🔍 UTILITÁRIOS
+├── resumo_df(df)                            # Ver resumo de DataFrame
+├── verificar_atualizacao(json_path)         # Verificar última atualização
+├── listar_jsons()                           # Listar todos os JSONs
+├── preview_json(json_path)                  # Ver preview do JSON
+└── validate_json_structure(data)            # Validar estrutura
+
+┌────────────────────────────────────────────────────────────────────┐
+│                        📊 FORMATO DO JSON                          │
+└────────────────────────────────────────────────────────────────────┘
+
+{
+  "mom": [                          ← Variação mensal
+    {
+      "data_date": "2024-01-01",
+      "Indicador_1": 0.5,
+      "Indicador_2": 1.2
+    }
+  ],
+  "a12": [                          ← Acumulado 12 meses
+    {
+      "data_date": "2024-01-01",
+      "Indicador_1": 4.5,
+      "Indicador_2": 5.8
+    }
+  ],
+  "metadata": {                     ← Metadados (gerado automaticamente)
+    "indicator": "MEU_INDICADOR",
+    "description": "Descrição",
+    "source": "IBGE/Sidra",
+    "last_updated": "2024-12-10T14:30:00",
+    "frequency": "monthly"
+  }
+}
+
+┌────────────────────────────────────────────────────────────────────┐
+│                     🎓 EXEMPLOS RÁPIDOS                            │
+└────────────────────────────────────────────────────────────────────┘
+
+# Exemplo 1: Ler e ver dados
+arquivo <- file.path(INPUT_DIR, "IPCA", "nucleos_ipca_completo.xlsx")
+dados <- read_excel_sheet(arquivo, "MoM", day = 1)
+resumo_df(dados)
+
+# Exemplo 2: Processar e salvar
+dados_mom <- read_excel_sheet(arquivo, "MoM", day = 1)
+dados_a12 <- read_excel_sheet(arquivo, "Acumulado_12m", day = 1)
+
+estrutura <- list(
+  mom = df_to_records(dados_mom),
+  a12 = df_to_records(dados_a12)
+)
+
+save_indicator_json(
+  estrutura, 
+  file.path(OUTPUT_DIR, "meu_ind.json"),
+  "MEU_IND", 
+  "Meu Indicador"
+)
+
+# Exemplo 3: Ver resultado
+preview_json(file.path(OUTPUT_DIR, "meu_ind.json"))
+
+# Exemplo 4: Listar todos os JSONs
+listar_jsons()
+
+┌────────────────────────────────────────────────────────────────────┐
+│                         🔧 CONFIGURAÇÕES                           │
+└────────────────────────────────────────────────────────────────────┘
+
+Edite config.R para personalizar:
+
+OUTPUT_DIR ← Onde os JSONs são salvos
+  └─ Padrão: C:/Users/Lucas/Desktop/PX2/frontend/public/data
+
+INPUT_DIR ← Onde estão seus arquivos Excel
+  └─ Padrão: C:/Users/Lucas/Desktop/reports PX/all data
+
+┌────────────────────────────────────────────────────────────────────┐
+│                      ⚡ COMANDOS RÁPIDOS                           │
+└────────────────────────────────────────────────────────────────────┘
+
+# Setup inicial
+source("INICIO_AQUI.R")
+
+# Atualizar IPCA
+source("ipca_update.R")
+
+# Criar novo indicador
+file.copy("templates/template_simples.R", "novo.R")
+
+# Ver exemplos
+source("workflows/exemplo_completo.R"); menu_exemplos()
+
+# Listar JSONs
+source("config.R"); source("utils.R"); listar_jsons()
+
+┌────────────────────────────────────────────────────────────────────┐
+│                    💡 DICAS E BOAS PRÁTICAS                        │
+└────────────────────────────────────────────────────────────────────┘
+
+✅ SEMPRE use read_excel_sheet() para ler Excel
+   → Formata datas automaticamente
+   → Padroniza coluna data_date
+   → Mostra mensagens úteis
+
+✅ SEMPRE use clean_for_json() antes de salvar
+   → Remove NaN e Inf
+   → Evita erros no JSON
+
+✅ SEMPRE valide seus dados
+   → Use resumo_df() para ver estrutura
+   → Use preview_json() para verificar resultado
+
+✅ Nomeie suas sheets de forma clara
+   → "MoM" para variação mensal
+   → "Acumulado_12m" para acumulado
+   → "Pesos" para pesos
+
+✅ Mantenha estrutura consistente
+   → Primeira coluna sempre Data
+   → Demais colunas sempre numéricas
+   → Nomes de colunas claros
+
+┌────────────────────────────────────────────────────────────────────┐
+│                         🐛 TROUBLESHOOTING                         │
+└────────────────────────────────────────────────────────────────────┘
+
+❌ Erro: "Arquivo não encontrado"
+   → Verifique caminho em config.R
+   → Use file.exists() para testar
+
+❌ Erro: "Sheet não encontrada"
+   → Use excel_sheets(arquivo) para ver sheets disponíveis
+   → Verifique nome exato (case-sensitive)
+
+❌ JSON com valores NULL
+   → Use clean_for_json() antes de converter
+   → Verifique se dados originais estão corretos
+
+❌ Erro: "Coluna data_date não encontrada"
+   → Certifique-se que primeira coluna tem Data
+   → Ou use read_excel_sheet() que formata automaticamente
+
+┌────────────────────────────────────────────────────────────────────┐
+│                            📞 AJUDA                                │
+└────────────────────────────────────────────────────────────────────┘
+
+📖 Documentação Completa:  README_R.md
+🚀 Início Rápido:          INICIO_AQUI.R
+🎓 Exemplos:               workflows/exemplo_completo.R
+📝 Template:               templates/template_simples.R
+
+Última atualização: Dezembro 2024
+

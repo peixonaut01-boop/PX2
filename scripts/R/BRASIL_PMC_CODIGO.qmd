@@ -1,0 +1,1550 @@
+---
+title: "Brasil - Atividade"
+subtitle: "Pesquisa Mensal do Comércio (PMC)"
+author: "Coloque seu nome aqui"
+date: now
+toc: true 
+toc_float:
+      collapsed: yes
+      smooth_scroll: yes
+theme: cosmo
+format: 
+  html:
+    embed-resources: true
+    fig-width: 7
+    fig-height: 6
+    fig-dpi: 100
+editor: visual
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r functions_packages}
+#| echo: false
+#| warning: false 
+
+options(repos = c(CRAN = "https://cloud.r-project.org/"))
+
+
+# Pacotes necessários
+packages <- c("ggplot2", "openxlsx", "lubridate", "purrr", "zoo", "RcppRoll",  "reshape2", "readxl", "dplyr", "ggrepel", "tibble",
+              "stringi")
+
+# Instalando pacotes ausentes
+installed_packages <- packages %in% rownames(installed.packages())
+if (any(!installed_packages)) {
+  install.packages(packages[!installed_packages])
+}
+
+# Carregando pacotes
+invisible(lapply(packages, library, character.only = TRUE))
+
+# Definição da paleta de cores
+
+palette <- c("#C38961FF", "#9F5630FF", "#E04B28FF", "#950404FF", 
+             "#0F542FFF", "#388F30FF", "#004042FF",  "#00a3b4") %>% rev()
+
+# Função para gráfico de barras
+bar.plot <- function(df, label, title, subtitle, source, palette) {
+  
+  theme_set(theme_bw())
+  colnames(df)[1] <- "Dates"
+  last_month <- format(df[nrow(df), 1], '%b-%Y')
+  
+  ggplot(df %>% melt(id.vars = "Dates"), aes(x = Dates, y = value, fill = variable)) +
+    geom_bar(position = "dodge", stat = "identity", alpha = 0.75) +
+    labs(y = NULL, x = NULL, title = title, 
+         subtitle = paste0(subtitle, last_month),
+         caption = source) +
+    theme(legend.position = 'bottom',
+         axis.text.y=element_text(size=13),
+         axis.text.x=element_text(size=13, angle = 90, 
+                                     vjust = 0.5, hjust = 1),
+          legend.text = element_text(size = 14),
+          plot.title = element_text(size = 16),
+          plot.subtitle = element_text(size = 13),
+          plot.caption = element_text(hjust = 0, size = 13)) +
+    geom_text(aes(label = value, colour = variable), vjust = -0.5 ) +
+    scale_color_manual(name = NULL, values = palette[1:length(label)]) +
+    scale_fill_manual(name = NULL, values = palette[1:length(label)], label = label) +
+    scale_x_date(date_breaks = "4 months", date_labels ="%b-%y") +
+    guides(colour = FALSE)
+}
+
+# Função para gráfico de linhas
+line.plot <- function(df, title, subtitle, label, source, palette, last = FALSE) {
+  
+  theme_set(theme_bw())
+  colnames(df)[1] <- "Dates"
+  last_month <- format(df[nrow(df), 1], '%b-%Y')
+  
+  plot <- ggplot(melt(df, id.vars = "Dates"), aes(x = Dates, y = value, colour = variable)) +
+    geom_line(linetype = 1, size = 1) +
+    labs(y = NULL, x = NULL, title = title, 
+         subtitle = paste0(subtitle, last_month),
+         caption = source) +
+    theme(legend.position = 'bottom',
+           axis.text.y=element_text(size=13),
+          axis.text.x=element_text(size=13, 
+                                   angle = 90, vjust = 0.5, hjust = 1),
+          legend.text = element_text(size = 14),
+          plot.title = element_text(size = 16),
+          plot.subtitle = element_text(size = 13),
+          plot.caption = element_text(hjust = 0, size = 13)) +
+    scale_x_date(date_breaks = "1 year", date_labels = "%Y") +
+    scale_colour_manual(name = NULL, values = palette[1:length(label)], label = label)
+  
+  if (last) {
+    last_values <- df %>% slice(nrow(.)) %>% mutate(across(-1, ~ round(., 2))) %>% melt(id.vars = "Dates")
+    plot <- plot +
+      geom_text_repel(aes(label = value), data = last_values, size = 3, 
+                      col = palette[1:length(label)], vjust = 1.5, hjust = -0.5)
+  }
+  
+  return(plot)
+}
+
+# Função para gráfico de barras invertido
+flip.bar.plot <- function(df, title, subtitle, source, palette) {
+  
+  theme_set(theme_bw())
+  last_obs <- format(df[nrow(df), 1], '%b-%Y')
+  
+  df <- df %>% slice(nrow(.)) %>% t() %>% as.data.frame() %>%
+    rownames_to_column(var = "Variable") %>% rename(Values = V1) %>%
+    slice(-1) %>% mutate(Values = as.numeric(Values))
+  
+  ggplot(df, aes(x = reorder(Variable, -Values), y = Values)) +
+    geom_bar(stat = "identity", fill = palette[1]) +
+    coord_flip() +
+    geom_text(aes(label = Values), col = palette[2], hjust = -0.2) +  
+    labs(y = NULL, x = NULL, title = title, 
+         subtitle = paste0(subtitle, last_obs),
+         caption = source) +
+    theme(legend.position = 'bottom',
+          axis.text = element_text(size = 13),
+          legend.text = element_text(size = 14),
+          plot.title = element_text(size = 16),
+          plot.subtitle = element_text(size = 13),
+          plot.caption = element_text(hjust = 0, size = 13))
+}
+
+# Função para gráfico de sazonalidade
+seasonality.plot <- function(data, year_range, selected_years, title, subtitle, source, palette) {
+  
+  theme_set(theme_bw())
+                            
+  palette<-palette
+  raw<-data
+  year_range <- year_range
+  selected_years <- selected_years %>% sort(decreasing=T)
+  title<-title
+  subtitle<-subtitle
+  source<-source
+  
+  last.month<-data[nrow(data),1] %>% format(., '%b-%Y')
+  
+    # Ensure column names
+  names(raw)[1:2] <- c("Date", "Value")
+  
+  # Prepare the data with Year and Month columns
+
+  raw <- raw %>%
+    mutate(Month = lubridate::month(Date, label = TRUE, abbr = TRUE),
+           Year = lubridate::year(Date)) 
+  
+  df<-raw %>%
+    filter(Year >= min(year_range) & Year <= max(year_range))
+  
+  seq.date<-seq.Date(ymd('2000-01-01'),ymd('2000-12-01'), by="month")
+                     
+  # Calculate median, 10th and 90th percentiles for each month
+  
+  seasonal_stats <- df %>%
+    group_by(Month) %>%
+    summarise(median = median(Value, na.rm = TRUE),
+              p10 = quantile(Value, 0.0, na.rm = TRUE),
+              p90 = quantile(Value, 1.0, na.rm = TRUE)) %>%
+    mutate(Month=seq.date)
+  
+  # Filter data for the selected years to plot their individual lines
+  selected_data <- raw %>%
+    filter(Year %in% selected_years)
+  
+  year(selected_data$Date)<-seq.date[1] %>% year()
+  
+  # Create the plot
+  ggplot() +
+    geom_ribbon(data = seasonal_stats, aes(x = Month, ymin = p10, ymax = p90), 
+                fill = "steelblue2", alpha = 0.1)  +
+    geom_line(data = seasonal_stats, aes(x = Month, y = median), 
+              linetype = "dashed", color = "black", size = 1) +
+    scale_x_date(date_breaks = "1 month", date_labels ="%b") +
+    geom_line(data = selected_data, aes(x = Date, y = Value, 
+                                        color = as.factor(Year)), size = 1) +
+    # Add markers (diamond shapes) to the selected years
+    geom_point(data = selected_data, aes(x = Date, y = Value, 
+                                         color = as.factor(Year)), 
+               size = 3, shape = 18) +
+    labs(
+      y=NULL,  
+      x=NULL,
+      title=paste0(title), 
+      subtitle= paste0(
+      subtitle, paste(" e mediana, max-min para", 
+                         min(year_range), "-", max(year_range))," | Última leitura: ", 
+                       last.month),
+      caption = paste0( source)
+      )  +
+    theme(legend.position = 'bottom',
+          axis.text.y=element_text(size=13),
+          axis.text.x=element_text(size=13),
+          legend.text = element_text(size=14),
+          plot.title = element_text(size=16),
+          plot.subtitle = element_text(size=13),
+          plot.caption = element_text(hjust=0,size=13)
+    ) +
+   scale_color_manual(
+     name = NULL, values = palette[length(selected_years):1]) 
+  
+  #+
+  #  geom_hline(yintercept = 0, lty=2, alpha=0.2)
+  
+
+}
+
+```
+
+```{r download_dados}
+#| echo: false
+#| warning: false 
+
+# Baixando dados do sidra (Volume/Receita Real SA e NSA)
+
+# Volume PMC por atividades com ajuste sazonal (SA) 
+
+url<-"https://sidra.ibge.gov.br/geratabela?format=xlsx&name=tabela8883.xlsx&terr=N&rank=-&query=t/8883/n1/all/v/7170/p/all/c11046/56736/c85/all/d/v7170%205/l/,c11046%2Bv%2Bc85,p%2Bt"
+
+# Arquivo temporário para armazenar o download 
+
+destfile <- tempfile(fileext = ".xlsx")  
+
+# Download do arquivo: mode "wb" permite download binário
+
+download.file(url, destfile, mode = "wb") 
+
+ativ.sa <- read_excel(destfile, skip=4) %>%
+  slice(-c(nrow(.))) %>%
+  select(-c(1:2)) %>%
+  mutate(Dates=seq.Date(from=lubridate::ymd("2000-01-01"), by="month", length=nrow(.))) %>%
+  relocate(Dates) %>%
+  mutate_at(vars(-1), ~ as.numeric(.))
+
+
+# Volume PMC por atividades sem ajuste sazonal (NSA)
+
+url<-"https://sidra.ibge.gov.br/geratabela?format=xlsx&name=tabela8883.xlsx&terr=N&rank=-&query=t/8883/n1/all/v/7169/p/all/c11046/56736/c85/all/d/v7169%205/l/,c11046%2Bv%2Bc85,p%2Bt"
+
+destfile <- tempfile(fileext = ".xlsx")  
+
+download.file(url, destfile, mode = "wb") 
+
+ativ.nsa <- read_excel(destfile, skip=4) %>%
+  slice(-c(nrow(.))) %>%
+  select(-c(1:2)) %>%
+  mutate(Dates=seq.Date(from=lubridate::ymd("2000-01-01"), by="month", length=nrow(.))) %>%
+  relocate(Dates) %>%
+  mutate_at(vars(-1), ~ as.numeric(.))
+
+# Nominal PMC por atividades sem ajuste sazonal
+
+url<-"https://sidra.ibge.gov.br/geratabela?format=xlsx&name=tabela8883.xlsx&terr=N&rank=-&query=t/8883/n1/all/v/7169/p/all/c11046/56735/c85/all/d/v7169%205/l/,c11046%2Bv%2Bc85,p%2Bt"
+
+destfile <- tempfile(fileext = ".xlsx") 
+
+
+download.file(url, destfile, mode = "wb")  
+
+nominal.nsa <- read_excel(destfile, skip=4) %>%
+  slice(-c(nrow(.))) %>%
+  select(-c(1:2)) %>%
+  mutate(Dates=seq.Date(from=lubridate::ymd("2000-01-01"), by="month", length=nrow(.))) %>%
+  relocate(Dates) %>%
+  mutate_at(vars(-1), ~ as.numeric(.))
+
+# PMC Restrita (NSA e SA)
+
+url<-"https://sidra.ibge.gov.br/geratabela?format=xlsx&name=tabela8880.xlsx&terr=N&rank=-&query=t/8880/n1/all/v/7169,7170/p/all/c11046/56734/d/v7169%205,v7170%205/l/,c11046%2Bv,p%2Bt"
+
+destfile <- tempfile(fileext = ".xlsx")  
+
+download.file(url, destfile, mode = "wb")  
+
+pmc.nivel <- read_excel(destfile, skip=3) %>%
+  slice(-c(nrow(.))) %>%
+  select(-c(1:2)) %>%
+  mutate(Dates=seq.Date(from=lubridate::ymd("2000-01-01"), by="month", length=nrow(.))) %>%
+  relocate(Dates) %>%
+  mutate_at(vars(-1), ~ as.numeric(.)) %>%
+  stats::setNames(., c("Dates","PMC NSA", "PMC SA"))
+
+# PMC Ampliada (NSA e SA)
+
+url<-"https://sidra.ibge.gov.br/geratabela?format=xlsx&name=tabela8881.xlsx&terr=N&rank=-&query=t/8881/n1/all/v/7169,7170/p/all/c11046/56736/d/v7169%205,v7170%205/l/,c11046%2Bv,p%2Bt"
+
+destfile <- tempfile(fileext = ".xlsx")  
+
+
+download.file(url, destfile, mode = "wb")  
+
+pmca.nivel <- read_excel(destfile, skip=3) %>%
+  slice(-c(nrow(.))) %>%
+  select(-c(1:2)) %>%
+  mutate(Dates=seq.Date(from=lubridate::ymd("2003-01-01"), by="month", length=nrow(.))) %>%
+  relocate(Dates) %>%
+  mutate_at(vars(-1), ~ as.numeric(.)) %>%
+  stats::setNames(., c("Dates","PMCA NSA", "PMCA SA"))
+
+```
+
+```{r tratamento_dados}
+#| echo: false
+#| warning: false 
+
+## Tratamento dos dados brutos: transformações mensais (MoM), interanuais (YoY) e construção dos deflatores
+
+# MoM%-SA, MoM%-NSA e YoY%-NSA 
+
+all.sa<- ativ.sa %>% 
+  left_join(x=., pmc.nivel[,-2], by="Dates") %>%
+  left_join(x=., pmca.nivel[,-2], by="Dates")
+
+all.nsa<- ativ.nsa %>% 
+  left_join(x=., pmc.nivel[,-3], by="Dates") %>%
+  left_join(x=., pmca.nivel[,-3], by="Dates")
+
+all.mom<-all.sa %>%
+  mutate_at(vars(-1), ~ 100*(./lag(., n = 1) -1)) %>%
+  mutate_at(vars(-1), ~ round(., digits=2))
+
+all.mom.nsa<-all.nsa %>%
+  mutate_at(vars(-1), ~ 100*(./lag(., n = 1) -1)) %>%
+  mutate_at(vars(-1), ~ round(., digits=2))
+
+all.mom.nom.nsa<-nominal.nsa %>%
+  mutate_at(vars(-1), ~ 100*(./lag(., n = 1) -1)) %>%
+  mutate_at(vars(-1), ~ round(., digits=2))
+
+all.qoqsaar<-all.sa %>%
+  mutate_at(vars(-1), ~ zoo::rollmean(., k=3, fill=NA, align='right')) %>%   mutate_at(vars(-1), ~ 100*((1+(./lag(., n = 3) -1))^4-1)) %>%
+  mutate_at(vars(-1), ~ round(., digits=2))
+
+all.yoy<-all.nsa  %>%
+  mutate_at(vars(-1), ~ 100*(./lag(., n = 12) -1)) %>%
+  mutate_at(vars(-1), ~ round(., digits=2))
+
+all.yoy.nominal<-nominal.nsa  %>%
+  mutate_at(vars(-1), ~ 100*(./lag(., n = 12) -1)) %>%
+  mutate_at(vars(-1), ~ round(., digits=2))
+
+## Construção dos deflatores
+
+# Copiando a estrutura de um conjunto de dados original 
+
+deflatores <- all.mom.nom.nsa 
+
+# Computando o deflator implícito, métrica mensal NSA
+
+deflatores[-1] <- purrr::map2_dfc(all.mom.nom.nsa[-1], all.mom.nsa[-c(1,16:17)],  ~ round(100 * ((1 + .x / 100) / (1 + .y / 100) - 1), 2))
+
+```
+
+# Resumo
+
+::: panel-tabset
+## Mensal
+
+```{r resumo_mensal ,fig.width=9, fig.height=7}
+#| echo: false
+#| warning: false 
+
+source<-c("Fonte: IBGE e elaboração do autor.")
+
+title<-paste0("PMC | Receita Real - Aberturas")
+
+subtitle<-paste0("MoM%-SA | Última leitura: ")
+
+names<-c("Combustíveis e lubrificantes"  , "Hipermercados, supermercados, produtos alimentícios, bebidas e fumo", "Tecidos, vestuário e calçados","Móveis e eletrodomésticos", "Artigos farmacêuticos, médicos, ortopédicos, de perfumaria e cosméticos" , "Livros, jornais, revistas e papelaria", "Equipamentos e materiais para escritório, informática e comunicação" , "Outros artigos de uso pessoal e doméstico", "Veículos, motocicletas, partes e peças"  , "Material de construção" , "PMC SA","PMCA SA")
+
+all.mom   %>% select(., c("Dates",names)) %>%
+  stats::setNames(c("Dates", substr(colnames(.)[-1], 1, 35))) %>%
+  as.data.frame() %>%
+  flip.bar.plot(.,title=title, subtitle=subtitle,source=source, palette=palette)
+
+```
+
+## Difusão
+
+```{r difusao_sa}
+#| echo: false
+#| warning: false 
+
+label<-c("Difusão", "MA(3)")
+
+source<-c("Fonte: IBGE e elaboração do autor.")
+
+title<-paste0("PMC | Receita Real - Difusão SA")
+
+subtitle<-paste0("% SA | Última leitura: ")
+
+difusao<-all.mom %>% select(., c("Dates",names[-c(length(names), length(names)-1)])) %>%
+  mutate(
+    Diffusion_Index = rowMeans(select(., -Dates) > 0, na.rm = TRUE)
+    )
+
+difusao %>% 
+  filter(Dates>=ymd("2004-01-01")) %>%
+  select(., c(Dates, ncol(.))) %>%
+  mutate(ma3=zoo::rollmean(.[[2]], k=3, fill=NA, align='right'))  %>%
+  as.data.frame() %>% 
+  line.plot(.,title=title, subtitle=subtitle,label=label, source=source, palette=palette, last=T) 
+
+
+```
+
+## 2019=100
+
+```{r base_sa}
+#| echo: false
+#| warning: false 
+
+label<-c("PMC Restrita", "PMC Ampliada")
+
+source<-c("Fonte: IBGE e elaboração do autor.")
+
+title<-paste0("PMC | Receita Real")
+
+subtitle<-paste0("SA, Dec/2019=100 | Última leitura: ")
+
+all.sa %>% 
+  select(., c(Dates, "PMC SA", "PMCA SA")) %>%
+  filter(Dates>=ymd("2004-01-01")) %>% 
+  mutate_at(vars(-1), ~ 100*(./.[which(Dates=="2019-12-01")])) %>%
+  as.data.frame() %>% 
+  line.plot(.,title=title, subtitle=subtitle,label=label, source=source, palette=palette, last=F)  
+
+
+```
+:::
+
+# Vendas no Varejo
+
+## PMC Restrita
+
+::: panel-tabset
+### Nivel
+
+```{r pmc_nivel}
+#| echo: false
+#| warning: false 
+
+indic<-c("PMC SA" )
+
+label<-c("Varejo Restrito", "MA(3)")
+
+source<-c("Fonte: IBGE e elaboração do autor.")
+
+title<-paste0("PMC | Receita Real - ", paste(label[1], collapse = ", "))
+
+subtitle<-paste0("Nivel SA | Última leitura: ")
+
+all.sa  %>% select(., c("Dates", indic)) %>% 
+  mutate_at(vars(-1), ~ 100*(./.[which(Dates=="2019-12-01")])) %>%
+  filter(Dates>=ymd("2004-01-01")) %>% 
+  mutate(ma3=zoo::rollmean(.[[2]], k=3, fill=NA, align='right')) %>%
+  as.data.frame() %>% 
+  line.plot(.,title=title, subtitle=subtitle,label=label, source=source, palette=palette) 
+
+
+
+```
+
+### MoM
+
+```{r pmc_mom}
+#| echo: false
+#| warning: false 
+
+source<-c("Fonte: IBGE e elaboração do autor.")
+
+title<-paste0("PMC | Receita Real - ", paste(label[1], collapse = ", "))
+
+subtitle<-paste0("MoM% - SA | Última leitura: ")
+
+all.mom %>% select(., c(Dates, indic)) %>% 
+  filter(Dates>=ymd("2023-01-01")) %>% 
+  as.data.frame() %>%
+  bar.plot(., 
+           title=title, subtitle=subtitle, label=label, source=source,  palette=palette)
+
+```
+
+### YoY
+
+```{r pmc_yoy}
+#| echo: false
+#| warning: false 
+
+label<-c("PMC", "MA(3)")
+
+source<-c("Fonte: IBGE e elaboração do autor.")
+
+title<-paste0("PMC | Receita Real - ", paste(label[1], collapse = ", "))
+
+subtitle<-paste0("YoY% - NSA | Última leitura: ")
+
+all.yoy %>% select(., c("Dates", paste0(label[1], " NSA"))) %>%
+  filter(Dates>=ymd("2004-01-01")) %>%
+  mutate(ma3=zoo::rollmean(.[[2]], k=3, fill=NA, align='right')) %>%
+  as.data.frame() %>% 
+  line.plot(.,title=title, subtitle=subtitle,label=label, source=source, palette=palette, last=T) +
+  coord_cartesian(ylim = c(-15,15))
+
+
+```
+
+### QoQ-SAAR
+
+```{r pmc_qoqsaar}
+#| echo: false
+#| warning: false 
+
+label<-c(label[1], "QoQ-SAAR")
+
+source<-c("Fonte: IBGE e elaboração do autor.")
+
+title<-paste0("PMC | Receita Real - ", paste(label[1], collapse = ", "))
+
+subtitle<-paste0("YoY% e QoQ-SAAR% | Última leitura: ")
+
+all.yoy %>% select(., c("Dates", paste0(label[1], " NSA"))) %>%
+  left_join(x=., y=select(all.qoqsaar, c(Dates, indic)),
+            by="Dates") %>%
+  filter(Dates>=ymd("2004-01-01"))  %>%
+  as.data.frame() %>% 
+  line.plot(.,title=title, subtitle=subtitle,label=label, source=source, palette=palette, last=T) +
+  coord_cartesian(ylim = c(-20,20))
+
+
+
+```
+:::
+
+## PMC Ampliada
+
+::: panel-tabset
+### Nivel
+
+```{r pmca_nivel}
+#| echo: false
+#| warning: false 
+
+indic<-c("PMCA SA" )
+
+label<-c("Varejo Ampliado", "MA(3)")
+
+source<-c("Fonte: IBGE e elaboração do autor.")
+
+title<-paste0("PMC | Receita Real - ", paste(label[1], collapse = ", "))
+
+subtitle<-paste0("Nivel SA | Última leitura: ")
+
+all.sa  %>% select(., c("Dates", indic)) %>% 
+  mutate_at(vars(-1), ~ 100*(./.[which(Dates=="2019-12-01")])) %>%
+  filter(Dates>=ymd("2004-01-01")) %>%
+  mutate(ma3=zoo::rollmean(.[[2]], k=3, fill=NA, align='right')) %>%
+  as.data.frame() %>% 
+  line.plot(.,title=title, subtitle=subtitle,label=label, source=source, palette=palette) 
+
+
+
+```
+
+### MoM
+
+```{r pmca_mom}
+#| echo: false
+#| warning: false 
+
+source<-c("Fonte: IBGE e elaboração do autor.")
+
+title<-paste0("PMC | Receita Real - ", paste(label[1], collapse = ", "))
+
+subtitle<-paste0("MoM% - SA | Última leitura: ")
+
+all.mom %>% select(., c(Dates, indic)) %>% 
+  filter(Dates>=ymd("2023-01-01")) %>% 
+  as.data.frame() %>%
+  bar.plot(., title=title, subtitle=subtitle, label=label, source=source, palette=palette)
+
+```
+
+### YoY
+
+```{r pmca_yoy}
+#| echo: false
+#| warning: false 
+
+label<-c("PMCA", "MA(3)")
+
+source<-c("Fonte: IBGE e elaboração do autor.")
+
+title<-paste0("PMC | Receita Real - ", paste(label[1], collapse = ", "))
+
+subtitle<-paste0("YoY% - NSA | Última leitura: ")
+
+     
+all.yoy %>% select(., c("Dates", paste0(label[1], " NSA"))) %>%
+  filter(Dates>=ymd("2004-01-01")) %>%
+  mutate(ma3=zoo::rollmean(.[[2]], k=3, fill=NA, align='right')) %>%
+  as.data.frame() %>% 
+  line.plot(.,title=title, subtitle=subtitle,label=label, source=source, palette=palette, last=T) +
+  coord_cartesian(ylim = c(-15,15))
+
+
+```
+
+### QoQ-SAAR
+
+```{r pmca_qoqsaar}
+#| echo: false
+#| warning: false 
+
+label<-c(label[1], "QoQ-SAAR")
+
+source<-c("Fonte: IBGE e elaboração do autor.")
+
+title<-paste0("PMC | Receita Real - ", paste(label[1], collapse = ", "))
+
+subtitle<-paste0("YoY% e QoQ-SAAR% | Última leitura: ")
+
+             
+all.yoy %>% select(., c("Dates", paste0(label[1], " NSA"))) %>%
+  left_join(x=., y=select(all.qoqsaar, c(Dates, indic)),
+            by="Dates") %>%
+  filter(Dates>=ymd("2004-01-01"))  %>%
+  as.data.frame() %>% 
+  line.plot(.,title=title, subtitle=subtitle,label=label, source=source, palette=palette, last=T) +
+  coord_cartesian(ylim = c(-20,20)) 
+
+
+
+```
+:::
+
+# Hipermercados, supermercados, produtos alimentícios, bebidas e fumo
+
+::: panel-tabset
+## Nivel
+
+```{r hiper_nivel}
+#| echo: false
+#| warning: false 
+
+indic<-c("Hipermercados, supermercados, produtos alimentícios, bebidas e fumo" )
+
+label<-c("Hipermercados, supermercados, produtos alimentícios, bebidas e fumo", "MA(3)")
+
+source<-c("Fonte: IBGE e elaboração do autor.")
+
+title<-paste0("PMC | Receita Real - ", paste(label[1], collapse = ", "))
+
+subtitle<-paste0("Nivel SA | Última leitura: ")
+
+all.sa %>% select(., c("Dates", indic)) %>% mutate_at(vars(-1), ~ 100*(./.[which(Dates=="2019-12-01")])) %>%
+  filter(Dates>=ymd("2004-01-01")) %>%
+  mutate(ma3=zoo::rollmean(.[[2]], k=3, fill=NA, align='right')) %>%
+  as.data.frame() %>% 
+  line.plot(.,title=title, subtitle=subtitle,label=label, source=source, palette=palette) 
+
+
+
+```
+
+## MoM
+
+```{r hiper_mom}
+#| echo: false
+#| warning: false 
+
+source<-c("Fonte: IBGE e elaboração do autor.")
+
+subtitle<-paste0("MoM% - SA | Última leitura: ")
+
+all.mom %>% select(., c(Dates, indic)) %>% 
+  filter(Dates>=ymd("2023-01-01")) %>% 
+  as.data.frame() %>%
+  bar.plot(., title=title, subtitle=subtitle, label=label, source=source,  palette=palette)
+
+```
+
+## QoQ-SAAR
+
+```{r hiper_qoqsaar}
+#| echo: false
+#| warning: false 
+
+label<-c(label[1], "QoQ-SAAR")
+
+source<-c("Fonte: IBGE e elaboração do autor.")
+
+title<-paste0("PMC | Receita Real - ", paste(label[1], collapse = ", "))
+
+subtitle<-paste0("YoY% e QoQ-SAAR% | Última leitura: ")
+             
+all.yoy %>% select(., c("Dates", indic)) %>%
+  left_join(x=., y=select(all.qoqsaar, c(Dates, indic)),
+            by="Dates") %>%
+  filter(Dates>=ymd("2004-01-01"))  %>%
+  as.data.frame() %>% 
+  line.plot(.,title=title, subtitle=subtitle,label=label,source=source, palette=palette, last=T) + coord_cartesian(ylim=c(-10,20))
+
+
+
+```
+
+## Deflator
+
+```{r hiper_deflator}
+#| echo: false
+#| warning: false 
+
+label<-label[1]
+
+title<-paste0("Deflator | Vendas no Varejo  - ", paste(label[1], collapse = ", "))
+
+subtitle<-paste0("MoM%-NSA")
+
+selected_years<-c(2023:2025)
+
+year_range = c(2003, 2019)
+
+deflatores %>% select(., c("Dates", indic)) %>%
+  as.data.frame() %>% 
+  seasonality.plot(., year_range=year_range, selected_years =selected_years,title=title,subtitle=subtitle,source=source, palette=palette)
+
+
+```
+:::
+
+# Combustíveis e lubrificantes
+
+::: panel-tabset
+## Nivel
+
+```{r comb_nivel}
+#| echo: false
+#| warning: false 
+
+indic<-c("Combustíveis e lubrificantes" )
+
+label<-c("Combustíveis e lubrificantes", "MA(3)")
+
+source<-c("Fonte: IBGE e elaboração do autor.")
+
+title<-paste0("PMC | Receita Real - ", paste(label[1], collapse = ", "))
+
+subtitle<-paste0("Nivel SA | Última leitura: ")
+             
+all.sa %>% select(., c("Dates", indic)) %>% mutate_at(vars(-1), ~ 100*(./.[which(Dates=="2019-12-01")])) %>%
+  filter(Dates>=ymd("2004-01-01")) %>%
+  mutate(ma3=zoo::rollmean(.[[2]], k=3, fill=NA, align='right')) %>%
+  as.data.frame() %>% 
+  line.plot(.,title=title, subtitle=subtitle,label=label, source=source, palette=palette) 
+
+
+
+```
+
+## MoM
+
+```{r comb_mom}
+#| echo: false
+#| warning: false 
+
+source<-c("Fonte: IBGE e elaboração do autor.")
+
+subtitle<-paste0("MoM% - SA | Última leitura: ")
+
+all.mom %>% select(., c(Dates, indic)) %>% 
+  filter(Dates>=ymd("2023-01-01")) %>% 
+  as.data.frame() %>%
+  bar.plot(., 
+           title=title, subtitle=subtitle, label=label, source=source,  palette=palette)
+
+```
+
+## QoQ-SAAR
+
+```{r comb_qoqsaar}
+#| echo: false
+#| warning: false 
+
+label<-c(label[1], "QoQ-SAAR")
+
+source<-c("Fonte: IBGE e elaboração do autor.")
+
+title<-paste0("PMC | Receita Real - ", paste(label[1], collapse = ", "))
+
+subtitle<-paste0("YoY% e QoQ-SAAR% | Última leitura: ")
+             
+all.yoy %>% select(., c("Dates", indic)) %>%
+  left_join(x=., y=select(all.qoqsaar, c(Dates, indic)),
+            by="Dates") %>%
+  filter(Dates>=ymd("2004-01-01"))  %>%
+  as.data.frame() %>% 
+  line.plot(.,title=title, subtitle=subtitle,label=label, source=source, palette=palette, last=T) +
+  coord_cartesian(ylim=c(-25,25))
+
+
+
+```
+
+## Deflator
+
+```{r comb_deflator}
+#| echo: false
+#| warning: false 
+
+label<-label[1]
+
+title<-paste0("Deflator | Vendas no Varejo  - ", paste(label[1], collapse = ", "))
+
+subtitle<-paste0("MoM%-NSA")
+
+selected_years<-c(2023:2025)
+
+year_range = c(2003, 2019)
+
+deflatores %>% select(., c("Dates", indic)) %>%
+  as.data.frame()  %>% 
+  seasonality.plot(., year_range=year_range, selected_years =selected_years,title=title,subtitle=subtitle,source=source, palette=palette)
+
+
+```
+:::
+
+# Tecidos, vestuário e calçados
+
+::: panel-tabset
+## Nivel
+
+```{r tecidos_nivel}
+#| echo: false
+#| warning: false 
+
+indic<-c("Tecidos, vestuário e calçados" )
+
+label<-c("Tecidos, vestuário e calçado", "MA(3)")
+
+source<-c("Fonte: IBGE e elaboração do autor.")
+
+title<-paste0("PMC | Receita Real - ", paste(label[1], collapse = ", "))
+
+subtitle<-paste0("Nivel SA | Última leitura: ")
+
+all.sa %>% select(., c("Dates", indic)) %>% mutate_at(vars(-1), ~ 100*(./.[which(Dates=="2019-12-01")])) %>%
+  filter(Dates>=ymd("2004-01-01")) %>%
+  mutate(ma3=zoo::rollmean(.[[2]], k=3, fill=NA, align='right')) %>%
+  as.data.frame() %>% 
+  line.plot(.,title=title, subtitle=subtitle,label=label, source=source, palette=palette) 
+
+
+
+```
+
+## MoM
+
+```{r tecidos_mom}
+#| echo: false
+#| warning: false 
+
+source<-c("Fonte: IBGE e elaboração do autor.")
+
+subtitle<-paste0("MoM% - SA | Última leitura: ")
+
+all.mom %>% select(., c(Dates, indic)) %>% 
+  filter(Dates>=ymd("2023-01-01")) %>% 
+  as.data.frame() %>%
+  bar.plot(., 
+           title=title, subtitle=subtitle, label=label, source=source,  palette=palette)
+
+```
+
+## QoQ-SAAR
+
+```{r tecidos_qoqsaar}
+#| echo: false
+#| warning: false 
+
+label<-c(label[1], "QoQ-SAAR")
+
+source<-c("Fonte: IBGE e elaboração do autor.")
+
+title<-paste0("PMC | Receita Real - ", paste(label[1], collapse = ", "))
+
+subtitle<-paste0("YoY% e QoQ-SAAR% | Última leitura: ")
+             
+all.yoy %>% select(., c("Dates", indic)) %>%
+  left_join(x=., y=select(all.qoqsaar, c(Dates, indic)),
+            by="Dates") %>%
+  filter(Dates>=ymd("2004-01-01"))  %>%
+  as.data.frame() %>% 
+  line.plot(.,title=title, subtitle=subtitle,label=label, source=source, palette=palette, last=T) + coord_cartesian(ylim=c(-50,50))
+
+
+
+```
+
+## Deflator
+
+```{r tecidos_deflator}
+#| echo: false
+#| warning: false 
+
+label<-label[1]
+
+title<-paste0("Deflator | Vendas no Varejo  - ", paste(label[1], collapse = ", "))
+
+subtitle<-paste0("MoM%-NSA")
+
+selected_years<-c(2023:2025)
+
+year_range = c(2003, 2019)
+
+deflatores %>% select(., c("Dates", indic)) %>%
+  as.data.frame() %>% 
+  seasonality.plot(., year_range=year_range, selected_years =selected_years,title=title,subtitle=subtitle,source=source, palette=palette)
+
+```
+:::
+
+# Móveis e eletrodomésticos
+
+::: panel-tabset
+## Nivel
+
+```{r moveis_nivel}
+#| echo: false
+#| warning: false 
+
+indic<-c("Móveis e eletrodomésticos" )
+
+label<-c("Móveis e eletrodomésticos", "MA(3)")
+
+source<-c("Fonte: IBGE e elaboração do autor.")
+
+title<-paste0("PMC | Receita Real - ", paste(label[1], collapse = ", "))
+
+subtitle<-paste0("Nivel SA | Última leitura: ")
+        
+all.sa %>% select(., c("Dates", indic)) %>% mutate_at(vars(-1), ~ 100*(./.[which(Dates=="2019-12-01")])) %>%
+  filter(Dates>=ymd("2004-01-01")) %>%
+  mutate(ma3=zoo::rollmean(.[[2]], k=3, fill=NA, align='right')) %>%
+  as.data.frame() %>% 
+  line.plot(.,title=title, subtitle=subtitle,label=label, source=source, palette=palette) 
+
+
+```
+
+## MoM
+
+```{r moveis_mom}
+#| echo: false
+#| warning: false 
+
+source<-c("Fonte: IBGE e elaboração do autor.")
+
+subtitle<-paste0("MoM% - SA | Última leitura: ")
+
+all.mom %>% select(., c(Dates, indic)) %>% 
+  filter(Dates>=ymd("2023-01-01")) %>% 
+  as.data.frame() %>%
+  bar.plot(., 
+           title=title, subtitle=subtitle, label=label, source=source,  palette=palette)
+
+```
+
+## QoQ-SAAR
+
+```{r moveis_qoqsaar}
+#| echo: false
+#| warning: false 
+
+label<-c(label[1], "QoQ-SAAR")
+
+source<-c("Fonte: IBGE e elaboração do autor.")
+
+title<-paste0("PMC | Receita Real - ", paste(label[1], collapse = ", "))
+
+subtitle<-paste0("YoY% e QoQ-SAAR% | Última leitura: ")
+             
+all.yoy %>% select(., c("Dates", indic)) %>%
+  left_join(x=., y=select(all.qoqsaar, c(Dates, indic)),
+            by="Dates") %>%
+  filter(Dates>=ymd("2004-01-01"))  %>%
+  as.data.frame() %>% 
+  line.plot(.,title=title, subtitle=subtitle,label=label, source=source, palette=palette, last=T) + coord_cartesian(ylim=c(-50,50))
+
+
+
+```
+
+## Deflator
+
+```{r moveis_deflator}
+#| echo: false
+#| warning: false 
+
+
+label<-label[1]
+
+title<-paste0("Deflator | Vendas no Varejo  - ", paste(label[1], collapse = ", "))
+
+subtitle<-paste0("MoM%-NSA")
+
+selected_years<-c(2023:2025)
+
+year_range = c(2003, 2019)
+
+deflatores %>% select(., c("Dates", indic)) %>%
+  as.data.frame() %>% 
+  seasonality.plot(., year_range=year_range, selected_years =selected_years,title=title,subtitle=subtitle,source=source, palette=palette)
+
+
+```
+:::
+
+# Artigos farmacêuticos
+
+::: panel-tabset
+## Nivel
+
+```{r farma_nivel}
+#| echo: false
+#| warning: false 
+
+indic<-c("Artigos farmacêuticos, médicos, ortopédicos, de perfumaria e cosméticos" )
+
+label<-c("Artigos farmacêuticos, médicos, ortopédicos, de perfumaria e cosméticos", "MA(3)")
+
+source<-c("Fonte: IBGE e elaboração do autor.")
+
+title<-paste0("PMC | Receita Real - ", paste(label[1], collapse = ", "))
+
+subtitle<-paste0("Nivel SA | Última leitura: ")
+
+
+             
+all.sa %>% select(., c("Dates", indic)) %>% mutate_at(vars(-1), ~ 100*(./.[which(Dates=="2019-12-01")])) %>%
+  filter(Dates>=ymd("2004-01-01")) %>%
+  mutate(ma3=zoo::rollmean(.[[2]], k=3, fill=NA, align='right')) %>%
+  as.data.frame() %>% 
+  line.plot(.,title=title, subtitle=subtitle,label=label, source=source, palette=palette) 
+
+
+
+```
+
+## MoM
+
+```{r fama_mom}
+#| echo: false
+#| warning: false 
+
+source<-c("Fonte: IBGE e elaboração do autor.")
+
+subtitle<-paste0("MoM% - SA | Última leitura: ")
+
+all.mom %>% select(., c(Dates, indic)) %>% 
+  filter(Dates>=ymd("2023-01-01")) %>% 
+  as.data.frame() %>%
+  bar.plot(., 
+           title=title, subtitle=subtitle, label=label, source=source,  palette=palette)
+
+```
+
+## QoQ-SAAR
+
+```{r farma_qoqsaar}
+#| echo: false
+#| warning: false 
+
+label<-c(label[1], "QoQ-SAAR")
+
+source<-c("Fonte: IBGE e elaboração do autor.")
+
+title<-paste0("PMC | Receita Real - ", paste(label[1], collapse = ", "))
+
+subtitle<-paste0("YoY% e QoQ-SAAR% | Última leitura: ")
+             
+all.yoy %>% select(., c("Dates", indic)) %>%
+  left_join(x=., y=select(all.qoqsaar, c(Dates, indic)),
+            by="Dates") %>%
+  filter(Dates>=ymd("2004-01-01"))  %>%
+  as.data.frame() %>% 
+  line.plot(.,title=title, subtitle=subtitle,label=label, source=source, palette=palette, last=T) + coord_cartesian(ylim=c(-25,25))
+
+
+
+```
+
+## Deflator
+
+```{r farma_deflator}
+#| echo: false
+#| warning: false 
+
+label<-label[1]
+
+title<-paste0("Deflator | Vendas no Varejo  - ", paste(label[1], collapse = ", "))
+
+subtitle<-paste0("MoM%-NSA")
+
+selected_years<-c(2023:2025)
+
+year_range = c(2003, 2019)
+
+deflatores %>% select(., c("Dates", indic)) %>%
+  as.data.frame() %>% 
+  seasonality.plot(., year_range=year_range, selected_years =selected_years,title=title,subtitle=subtitle,source=source, palette=palette) 
+
+```
+:::
+
+# Outros artigos de uso pessoal
+
+::: panel-tabset
+## Nivel
+
+```{r outros_nivel}
+#| echo: false
+#| warning: false 
+
+indic<-c("Outros artigos de uso pessoal e doméstico" )
+
+label<-c("Outros artigos de uso pessoal e doméstico", "MA(3)")
+
+source<-c("Fonte: IBGE e elaboração do autor.")
+
+title<-paste0("PMC | Receita Real - ", paste(label[1], collapse = ", "))
+
+subtitle<-paste0("Nivel SA | Última leitura: ")
+
+
+             
+all.sa %>% select(., c("Dates", indic)) %>% mutate_at(vars(-1), ~ 100*(./.[which(Dates=="2019-12-01")])) %>%
+  filter(Dates>=ymd("2004-01-01")) %>%
+  mutate(ma3=zoo::rollmean(.[[2]], k=3, fill=NA, align='right')) %>%
+  as.data.frame() %>% 
+  line.plot(.,title=title, subtitle=subtitle,label=label, source=source, palette=palette) 
+
+
+
+```
+
+## MoM
+
+```{r outros_mom}
+#| echo: false
+#| warning: false 
+
+source<-c("Fonte: IBGE e elaboração do autor.")
+
+subtitle<-paste0("MoM% - SA | Última leitura: ")
+
+all.mom %>% select(., c(Dates, indic)) %>% 
+  filter(Dates>=ymd("2023-01-01")) %>% 
+  as.data.frame() %>%
+  bar.plot(., 
+           title=title, subtitle=subtitle, label=label, source=source,  palette=palette)
+
+```
+
+## QoQ-SAAR
+
+```{r outros_qoqsaar}
+#| echo: false
+#| warning: false 
+
+label<-c(label[1], "QoQ-SAAR")
+
+source<-c("Fonte: IBGE e elaboração do autor.")
+
+title<-paste0("PMC | Receita Real - ", paste(label[1], collapse = ", "))
+
+subtitle<-paste0("YoY% e QoQ-SAAR% | Última leitura: ")
+             
+all.yoy %>% select(., c("Dates", indic)) %>%
+  left_join(x=., y=select(all.qoqsaar, c(Dates, indic)),
+            by="Dates") %>%
+  filter(Dates>=ymd("2004-01-01"))  %>%
+  as.data.frame() %>% 
+  line.plot(.,title=title, subtitle=subtitle,label=label, source=source, palette=palette, last=T) + coord_cartesian(ylim=c(-50,50))
+
+
+
+```
+
+## Deflator
+
+```{r outros_deflator}
+#| echo: false
+#| warning: false 
+
+label<-label[1]
+
+title<-paste0("Deflator | Vendas no Varejo  - ", paste(label[1], collapse = ", "))
+
+subtitle<-paste0("MoM%-NSA")
+
+selected_years<-c(2023:2025)
+
+year_range = c(2003, 2019)
+
+deflatores %>% select(., c("Dates", indic)) %>%
+  as.data.frame() %>% 
+  seasonality.plot(., year_range=year_range, selected_years =selected_years,title=title,subtitle=subtitle,source=source, palette=palette) 
+
+
+```
+:::
+
+# Livros, jornais, revistas e papelaria
+
+```{r livros_nivel}
+#| echo: false
+#| warning: false 
+
+indic<-c("Livros, jornais, revistas e papelaria" )
+
+label<-c("Livros, jornais, revistas e papelaria", "MA(3)")
+
+source<-c("Fonte: IBGE e elaboração do autor.")
+
+title<-paste0("PMC | Receita Real - ", paste(label[1], collapse = ", "))
+
+subtitle<-paste0("Nivel SA | Última leitura: ")
+
+            
+all.sa %>% select(., c("Dates", indic)) %>% mutate_at(vars(-1), ~ 100*(./.[which(Dates=="2019-12-01")])) %>%
+  filter(Dates>=ymd("2004-01-01")) %>%
+  mutate(ma3=zoo::rollmean(.[[2]], k=3, fill=NA, align='right')) %>%
+  as.data.frame() %>% 
+  line.plot(.,title=title, subtitle=subtitle,label=label, source=source, palette=palette) 
+
+
+
+```
+
+# Equipamentos e materiais para escritório, informática e comunicação
+
+```{r equip_nivel}
+#| echo: false
+#| warning: false 
+
+indic<-c("Equipamentos e materiais para escritório, informática e comunicação" )
+
+label<-c("Equipamentos e materiais para escritório, informática e comunicação", "MA(3)")
+
+source<-c("Fonte: IBGE e elaboração do autor.")
+
+title<-paste0("PMC | Receita Real - ", paste(label[1], collapse = ", "))
+
+subtitle<-paste0("Nivel SA | Última leitura: ")
+
+
+all.sa %>% select(., c("Dates", indic)) %>% mutate_at(vars(-1), ~ 100*(./.[which(Dates=="2019-12-01")])) %>%
+  filter(Dates>=ymd("2004-01-01")) %>%
+  mutate(ma3=zoo::rollmean(.[[2]], k=3, fill=NA, align='right')) %>%
+  as.data.frame() %>% 
+  line.plot(.,title=title, subtitle=subtitle,label=label, source=source, palette=palette) 
+
+
+
+```
+
+# Material de construção
+
+::: panel-tabset
+## Nivel
+
+```{r mat_nivel}
+#| echo: false
+#| warning: false 
+
+indic<-c("Material de construção" )
+
+label<-c("Material de construção", "MA(3)")
+
+source<-c("Fonte: IBGE e elaboração do autor.")
+
+title<-paste0("PMC | Receita Real - ", paste(label[1], collapse = ", "))
+
+subtitle<-paste0("Nivel SA | Última leitura: ")
+
+
+             
+all.sa %>% select(., c("Dates", indic)) %>% mutate_at(vars(-1), ~ 100*(./.[which(Dates=="2019-12-01")])) %>%
+  filter(Dates>=ymd("2004-01-01")) %>%
+  mutate(ma3=zoo::rollmean(.[[2]], k=3, fill=NA, align='right')) %>%
+  as.data.frame() %>% 
+  line.plot(.,title=title, subtitle=subtitle,label=label, source=source, palette=palette) 
+
+
+
+```
+
+## MoM
+
+```{r mat_mom}
+#| echo: false
+#| warning: false 
+
+# indic<-c("1 Indústria geral" )
+
+# label<-c("Indústria geral")
+
+source<-c("Fonte: IBGE e elaboração do autor.")
+
+subtitle<-paste0("MoM% - SA | Última leitura: ")
+
+all.mom %>% select(., c(Dates, indic)) %>% 
+  filter(Dates>=ymd("2023-01-01")) %>% 
+  as.data.frame() %>%
+  bar.plot(., 
+           title=title, subtitle=subtitle, label=label, source=source,  palette=palette)
+
+```
+
+## QoQ-SAAR
+
+```{r mat_qoqsaar}
+#| echo: false
+#| warning: false 
+
+label<-c(label[1], "QoQ-SAAR")
+
+source<-c("Fonte: IBGE e elaboração do autor.")
+
+title<-paste0("PMC | Receita Real - ", paste(label[1], collapse = ", "))
+
+subtitle<-paste0("YoY% e QoQ-SAAR% | Última leitura: ")
+             
+all.yoy %>% select(., c("Dates", indic)) %>%
+  left_join(x=., y=select(all.qoqsaar, c(Dates, indic)),
+            by="Dates") %>%
+  filter(Dates>=ymd("2004-01-01"))  %>%
+  as.data.frame() %>% 
+  line.plot(.,title=title, subtitle=subtitle,label=label, source=source, palette=palette, last=T) + coord_cartesian(ylim=c(-50,50))
+
+
+
+```
+
+## Deflator
+
+```{r mat_deflator}
+#| echo: false
+#| warning: false 
+
+label<-label[1]
+
+title<-paste0("Deflator | Vendas no Varejo  - ", paste(label[1], collapse = ", "))
+
+subtitle<-paste0("MoM%-NSA")
+
+selected_years<-c(2023:2025)
+
+year_range = c(2003, 2019)
+
+deflatores %>% select(., c("Dates", indic)) %>%
+  as.data.frame() %>% 
+  seasonality.plot(., year_range=year_range, selected_years =selected_years,title=title,subtitle=subtitle,source=source, palette=palette) 
+
+
+```
+:::
+
+# Veículos
+
+::: panel-tabset
+## Nivel
+
+```{r veic_nivel}
+#| echo: false
+#| warning: false 
+
+indic<-c("Veículos, motocicletas, partes e peças" )
+
+label<-c("Veículos, motocicletas, partes e peças", "MA(3)")
+
+source<-c("Fonte: IBGE e elaboração do autor.")
+
+title<-paste0("PMC | Receita Real - ", paste(label[1], collapse = ", "))
+
+subtitle<-paste0("Nivel SA | Última leitura: ")
+
+
+             
+all.sa %>% select(., c("Dates", indic)) %>% mutate_at(vars(-1), ~ 100*(./.[which(Dates=="2019-12-01")])) %>%
+  filter(Dates>=ymd("2004-01-01")) %>%
+  mutate(ma3=zoo::rollmean(.[[2]], k=3, fill=NA, align='right')) %>%
+  as.data.frame() %>% 
+  line.plot(.,title=title, subtitle=subtitle,label=label, source=source, palette=palette) 
+
+
+
+```
+
+## MoM
+
+```{r veic_mom}
+#| echo: false
+#| warning: false 
+
+source<-c("Fonte: IBGE e elaboração do autor.")
+
+subtitle<-paste0("MoM% - SA | Última leitura: ")
+
+all.mom %>% select(., c(Dates, indic)) %>% 
+  filter(Dates>=ymd("2023-01-01")) %>% 
+  as.data.frame() %>%
+  bar.plot(., 
+           title=title, subtitle=subtitle, label=label, source=source,  palette=palette)
+
+```
+
+## QoQ-SAAR
+
+```{r veic_qoqsaar}
+#| echo: false
+#| warning: false 
+
+label<-c(label[1], "QoQ-SAAR")
+
+source<-c("Fonte: IBGE e elaboração do autor.")
+
+title<-paste0("PMC | Receita Real - ", paste(label[1], collapse = ", "))
+
+subtitle<-paste0("YoY% e QoQ-SAAR% | Última leitura: ")
+             
+all.yoy %>% select(., c("Dates", indic)) %>%
+  left_join(x=., y=select(all.qoqsaar, c(Dates, indic)),
+            by="Dates") %>%
+  filter(Dates>=ymd("2004-01-01"))  %>%
+  as.data.frame() %>% 
+  line.plot(.,title=title, subtitle=subtitle,label=label, source=source, palette=palette, last=T) + coord_cartesian(ylim=c(-50,50))
+
+
+
+```
+
+## Deflator
+
+```{r veic_deflator}
+#| echo: false
+#| warning: false 
+
+label<-label[1]
+
+title<-paste0("Deflator | Vendas no Varejo  - ", paste(label[1], collapse = ", "))
+
+subtitle<-paste0("MoM%-NSA")
+
+selected_years<-c(2023:2025)
+
+year_range = c(2003, 2019)
+
+deflatores %>% select(., c("Dates", indic)) %>%
+  as.data.frame() %>% 
+  seasonality.plot(., year_range=year_range, selected_years =selected_years,title=title,subtitle=subtitle,source=source, palette=palette) 
+
+
+```
+:::
+
+# Atacado especializado em produtos alimentícios, bebidas e fumo
+
+::: panel-tabset
+## MoM%-NSA
+
+```{r atacarejo_momsa}
+#| echo: false
+#| warning: false 
+
+indic<-"Atacado especializado em produtos alimentícios, bebidas e fumo"
+  
+label<-indic[1]
+
+title<-paste0("PMC | Receita Real  - ", paste(label[1], collapse = ", "))
+
+subtitle<-paste0("MoM%-NSA")
+
+selected_years<-c(2023:2025)
+
+year_range = c(2011, 2022)
+
+all.mom.nsa %>% select(., c("Dates", indic)) %>%
+  as.data.frame() %>% 
+  seasonality.plot(., year_range=year_range, selected_years =selected_years,title=title,subtitle=subtitle,source=source, palette=palette) 
+
+
+```
+
+## YoY
+
+```{r ataacrejo_yoy}
+#| echo: false
+#| warning: false 
+
+label<-c(indic[1], "MA(3)")
+
+source<-c("Fonte: IBGE e elaboração do autor.")
+
+title<-paste0("PMC | Receita Real - ", paste(label[1], collapse = ", "))
+
+subtitle<-paste0("YoY% - NSA | Última leitura: ")
+
+all.yoy %>% select(., c("Dates", indic)) %>%
+  filter(Dates>=ymd("2020-01-01")) %>%
+  mutate(ma3=zoo::rollmean(.[[2]], k=3, fill=NA, align='right')) %>%
+  as.data.frame() %>% 
+  line.plot(.,title=title, subtitle=subtitle,label=label, source=source, palette=palette, last=T) 
+
+
+```
+
+## Deflator
+
+```{r atacarejo_deflator}
+#| echo: false
+#| warning: false 
+
+label<-label[1]
+
+title<-paste0("Deflator | Vendas no Varejo  - ", paste(label[1], collapse = ", "))
+
+subtitle<-paste0("MoM%-NSA")
+
+selected_years<-c(2023:2025)
+
+year_range = c(2003, 2019)
+
+deflatores %>% select(., c("Dates", indic)) %>%
+  as.data.frame() %>% 
+  seasonality.plot(., year_range=year_range, selected_years =selected_years,title=title,subtitle=subtitle,source=source, palette=palette) 
+
+
+```
+:::

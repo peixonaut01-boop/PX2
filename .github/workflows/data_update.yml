@@ -1,0 +1,74 @@
+name: Data Update ETL
+
+on:
+  schedule:
+    # 09:30 AM BRT (12:30 UTC) - Checking later due to API latency
+    - cron: '30 12 * * *'
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  check-calendar:
+    runs-on: ubuntu-latest
+    outputs:
+      should_run: ${{ steps.check.outputs.should_run }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+      
+      - name: Check IBGE Calendar
+        id: check
+        run: python3 scripts/check_calendar.py
+
+  update-data:
+    needs: check-calendar
+    if: needs.check-calendar.outputs.should_run == 'true' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    
+    defaults:
+      run:
+        working-directory: ./scripts/R
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup R
+        uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: '4.3.1'
+
+      - name: Install System Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libcurl4-openssl-dev libssl-dev libxml2-dev
+
+      - name: Install R Packages
+        run: |
+          Rscript -e 'install.packages(c("jsonlite", "readxl", "dplyr", "lubridate", "curl"), repos="https://cloud.r-project.org")'
+
+      - name: Run ETL Scripts
+        run: |
+          Rscript run_all.R
+
+      - name: Generate Flash Reports
+        run: |
+          python3 ../../scripts/generate_flash_report.py
+
+      - name: Commit and Push Changes
+        # Running from root context for git operations to be safe
+        working-directory: .
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # Check if data changed
+          if [[ -n $(git status --porcelain frontend/public/data) ]]; then
+            echo "Data changes detected. Committing..."
+            git add frontend/public/data
+            git commit -m "chore(data): auto-update indicators"
+            git push
+          else
+            echo "No data changes detected. Skipping push."
+          fi

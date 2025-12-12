@@ -1,0 +1,997 @@
+---
+title: "Brasil Macro Atividade"
+subtitle: "Pesquisa Industrial Mensal (PIM)"
+author: "Coloque seu nome aqui"
+date: now
+toc: true 
+toc_float:
+      collapsed: yes
+      smooth_scroll: yes
+theme: cosmo
+format: 
+  html:
+    embed-resources: true
+    fig-width: 7
+    fig-height: 6
+    fig-dpi: 100
+editor: visual
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r functions_packages}
+#| echo: false
+#| warning: false 
+
+options(repos = c(CRAN = "https://cloud.r-project.org/"))
+
+
+# Pacotes necessários
+packages <- c("ggplot2", "openxlsx", "lubridate", "purrr", "zoo", "RcppRoll",  "reshape2", "readxl", "dplyr", "ggrepel", "tibble",
+              "stringi")
+
+# Instalando pacotes ausentes
+installed_packages <- packages %in% rownames(installed.packages())
+if (any(!installed_packages)) {
+  install.packages(packages[!installed_packages])
+}
+
+# Carregando pacotes
+invisible(lapply(packages, library, character.only = TRUE))
+
+# Definição da paleta de cores
+
+palette <- c("#C38961FF", "#9F5630FF", "#E04B28FF", "#950404FF", 
+             "#0F542FFF", "#388F30FF", "#004042FF",  "#00a3b4") %>% rev()
+
+# Função para gráfico de barras
+bar.plot <- function(df, label, title, subtitle, source, palette) {
+  
+  theme_set(theme_bw())
+  colnames(df)[1] <- "Dates"
+  last_month <- format(df[nrow(df), 1], '%b-%Y')
+  
+  ggplot(df %>% reshape2::melt(id.vars = "Dates"), aes(x = Dates, y = value, fill = variable)) +
+    geom_bar(position = "dodge", stat = "identity", alpha = 0.75) +
+    labs(y = NULL, x = NULL, title = title, 
+         subtitle = paste0(subtitle, last_month),
+         caption = source) +
+    theme(legend.position = 'bottom',
+         axis.text.y=element_text(size=13),
+         axis.text.x=element_text(size=13, angle = 90, 
+                                     vjust = 0.5, hjust = 1),
+          legend.text = element_text(size = 14),
+          plot.title = element_text(size = 16),
+          plot.subtitle = element_text(size = 13),
+          plot.caption = element_text(hjust = 0, size = 13)) +
+    geom_text(aes(label = value, colour = variable), vjust = -0.5 ) +
+    scale_color_manual(name = NULL, values = palette[1:length(label)]) +
+    scale_fill_manual(name = NULL, values = palette[1:length(label)], label = label) +
+    scale_x_date(date_breaks = "4 months", date_labels ="%b-%y") +
+    guides(colour = FALSE)
+}
+
+# Função para gráfico de linhas
+line.plot <- function(df, title, subtitle, label, source, palette, last = FALSE) {
+  
+  theme_set(theme_bw())
+  colnames(df)[1] <- "Dates"
+  last_month <- format(df[nrow(df), 1], '%b-%Y')
+  
+  plot <- ggplot(reshape2::melt(df, id.vars = "Dates"), aes(x = Dates, y = value, colour = variable)) +
+    geom_line(linetype = 1, size = 1) +
+    labs(y = NULL, x = NULL, title = title, 
+         subtitle = paste0(subtitle, last_month),
+         caption = source) +
+    theme(legend.position = 'bottom',
+           axis.text.y=element_text(size=13),
+          axis.text.x=element_text(size=13, 
+                                   angle = 90, vjust = 0.5, hjust = 1),
+          legend.text = element_text(size = 14),
+          plot.title = element_text(size = 16),
+          plot.subtitle = element_text(size = 13),
+          plot.caption = element_text(hjust = 0, size = 13)) +
+    scale_x_date(date_breaks = "1 year", date_labels = "%Y") +
+    scale_colour_manual(name = NULL, values = palette[1:length(label)], label = label)
+  
+  if (last) {
+    last_values <- df %>% slice(nrow(.)) %>% mutate(across(-1, ~ round(., 2))) %>% reshape2::melt(id.vars = "Dates")
+    plot <- plot +
+      geom_text_repel(aes(label = value), data = last_values, size = 3, 
+                      col = palette[1:length(label)], vjust = 1.5, hjust = -0.5)
+  }
+  
+  return(plot)
+}
+
+# Função para gráfico de barras invertido
+flip.bar.plot <- function(df, title, subtitle, source, palette) {
+  
+  theme_set(theme_bw())
+  last_obs <- format(df[nrow(df), 1], '%b-%Y')
+  
+  df <- df %>% slice(nrow(.)) %>% t() %>% as.data.frame() %>%
+    rownames_to_column(var = "Variable") %>% rename(Values = V1) %>%
+    slice(-1) %>% mutate(Values = as.numeric(Values))
+  
+  ggplot(df, aes(x = reorder(Variable, -Values), y = Values)) +
+    geom_bar(stat = "identity", fill = palette[1]) +
+    coord_flip() +
+    geom_text(aes(label = Values), col = palette[2], hjust = -0.2) +  
+    labs(y = NULL, x = NULL, title = title, 
+         subtitle = paste0(subtitle, last_obs),
+         caption = source) +
+    theme(legend.position = 'bottom',
+          axis.text = element_text(size = 13),
+          legend.text = element_text(size = 14),
+          plot.title = element_text(size = 16),
+          plot.subtitle = element_text(size = 13),
+          plot.caption = element_text(hjust = 0, size = 13))
+}
+
+
+```
+
+```{r download_dados}
+#| echo: false
+#| warning: false 
+
+# Baixando dados do sidra (Volume SA e NSA)
+
+# Por atividades industriais (SA)
+
+url<-"https://sidra.ibge.gov.br/geratabela?format=xlsx&name=tabela8888.xlsx&terr=N&rank=-&query=t/8888/n1/all/v/12607/p/all/c544/all/d/v12607%205/l/v,c544,p%2Bt"
+
+destfile <- tempfile(fileext = ".xlsx")  
+
+download.file(url, destfile, mode = "wb")  
+
+ativ.sa <- read_excel(destfile, skip=3) %>%
+  slice(-c(nrow(.))) %>%
+  select(-c(1:2)) %>%
+  mutate(Dates=seq.Date(from=lubridate::ymd("2002-01-01"), by="month", length=nrow(.))) %>%
+  relocate(Dates) %>%
+  mutate_at(vars(-1), ~ as.numeric(.))
+
+# Por atividades (NSA)
+
+url<-"https://sidra.ibge.gov.br/geratabela?format=xlsx&name=tabela8888.xlsx&terr=N&rank=-&query=t/8888/n1/all/v/12606/p/all/c544/all/d/v12606%205/l/v,c544,p%2Bt"
+
+destfile <- tempfile(fileext = ".xlsx")  
+
+download.file(url, destfile, mode = "wb") 
+
+ativ.nsa <- read_excel(destfile, skip=3) %>%
+  slice(-c(nrow(.))) %>%
+  select(-c(1:2)) %>%
+  mutate(Dates=seq.Date(from=lubridate::ymd("2002-01-01"), by="month", length=nrow(.))) %>%
+  relocate(Dates) %>%
+  mutate_at(vars(-1), ~ as.numeric(.))
+
+# Por categorias (SA)
+
+url<-"https://sidra.ibge.gov.br/geratabela?format=xlsx&name=tabela8887.xlsx&terr=N&rank=-&query=t/8887/n1/all/v/12607/p/all/c543/129278,129283,129300,129301,129305/d/v12607%205/l/,c543,p%2Bt%2Bv"
+
+destfile <- tempfile(fileext = ".xlsx")  
+
+download.file(url, destfile, mode = "wb")  
+
+categorias.sa <- read_excel(destfile, skip=2) %>%
+  slice(-c(nrow(.))) %>%
+  select(-c(1:3)) %>%
+  mutate(Dates=seq.Date(from=lubridate::ymd("2002-01-01"), by="month", length=nrow(.))) %>%
+  relocate(Dates) %>%
+  mutate_at(vars(-1), ~ as.numeric(.))
+
+# Por categorias (NSA)
+
+url<-"https://sidra.ibge.gov.br/geratabela?format=xlsx&name=tabela8887.xlsx&terr=N&rank=-&query=t/8887/n1/all/v/12606/p/all/c543/129278,129283,129300,129301,129305/d/v12606%205/l/,c543,p%2Bt%2Bv"
+
+destfile <- tempfile(fileext = ".xlsx")  
+
+download.file(url, destfile, mode = "wb")  
+
+categorias.nsa <- read_excel(destfile, skip=2) %>%
+  slice(-c(nrow(.))) %>%
+  select(-c(1:3)) %>%
+  mutate(Dates=seq.Date(from=lubridate::ymd("2002-01-01"), by="month", length=nrow(.))) %>%
+  relocate(Dates) %>%
+  mutate_at(vars(-1), ~ as.numeric(.))
+
+```
+
+```{r tratamento_dados}
+#| echo: false
+#| warning: false 
+
+## Tratamento dos dados brutos: transformações mensais (MoM), interanuais (YoY) e trimestrais (QoQ)
+
+all.mom<-ativ.sa %>% 
+  left_join(x=., y=categorias.sa, by="Dates") %>%
+  mutate_at(vars(-1), ~ 100*(./lag(., n = 1) -1)) %>%
+  mutate_at(vars(-1), ~ round(., digits=2))
+
+all.qoq<-ativ.sa %>% 
+  left_join(x=., y=categorias.sa, by="Dates") %>%
+  mutate_at(vars(-1), ~ zoo::rollmean(., k=3, fill=NA, align='right')) %>%
+  mutate_at(vars(-1), ~ 100*(./lag(., n = 3)-1)) %>%
+  mutate_at(vars(-1), ~ round(., digits=2))
+
+all.yoy<-ativ.nsa %>% 
+  left_join(x=., y=categorias.nsa, by="Dates") %>%
+  mutate_at(vars(-1), ~ 100*(./lag(., n = 12) -1)) %>%
+  mutate_at(vars(-1), ~ round(., digits=2))
+
+all.sa<-ativ.sa %>% 
+  left_join(x=., y=categorias.sa, by="Dates")
+
+```
+
+# Resumo
+
+::::: panel-tabset
+
+## Mensal
+
+```{r resumo_mensal ,fig.width=9, fig.height=7}
+#| echo: false
+#| warning: false 
+
+source<-c("Fonte: IBGE e elaboração do autor.")
+
+title<-paste0("Brasil | Produção Industrial - Aberturas")
+
+subtitle<-paste0("MoM%-SA | Última Leitura: ")
+
+all.mom  %>% select(., c(Dates, 2:4, 29:33 )) %>%
+  as.data.frame() %>%
+  flip.bar.plot(., 
+                title=title,
+                subtitle=subtitle,
+                source=source, palette=palette)
+
+```
+
+## Trimestral
+
+```{r resumo_trimestral ,fig.width=9, fig.height=7}
+#| echo: false
+#| warning: false 
+
+source<-c("Fonte: IBGE e elaboração do autor.")
+
+title<-paste0("Brasil | Produção Industrial - Aberturas")
+
+subtitle<-paste0("QoQ%-SA | Última Leitura: ")
+
+all.qoq  %>% select(., c(Dates, 2:4, 29:33 )) %>%
+  as.data.frame() %>%
+  flip.bar.plot(., 
+                title=title,
+                subtitle=subtitle,
+                source=source, palette=palette)
+
+```
+
+
+
+## Difusão
+
+```{r difusao_sa}
+#| echo: false
+#| warning: false 
+
+label<-c("Difusão", "MA(3)")
+
+source<-c("Fonte: IBGE e elaboração do autor.")
+
+title<-paste0("PIM | Por atividade - Difusão SA")
+
+subtitle<-paste0("% SA | Última Leitura: ")
+
+difusao<-all.mom %>% select(., c("Dates",3,5:28))  %>%
+  mutate(
+    Diffusion_Index = rowMeans(select(., -Dates) > 0, na.rm = TRUE)
+    )
+
+difusao  %>%
+  select(., c(Dates, ncol(.))) %>%
+  mutate(ma3=zoo::rollmean(.[[2]], k=3, fill=NA, align='right')) %>%
+  as.data.frame() %>% 
+  line.plot(.,title=title, subtitle=subtitle,label=label, source=source, palette=palette, last=T) 
+  
+
+
+
+```
+
+## Difusão (zoom)
+
+```{r difusao_sa_zoom}
+#| echo: false
+#| warning: false 
+
+label<-c("Difusão")
+
+source<-c("Fonte: IBGE e elaboração do autor.")
+
+
+difusao  %>%
+  select(., c(Dates, ncol(.))) %>%
+  filter(Dates>=ymd("2023-01-01")) %>%
+  mutate_at(vars(-1), ~ round(., digits=2)) %>%
+  as.data.frame() %>% 
+  bar.plot(.,title=title, subtitle=subtitle,label=label, source=source, palette=palette) +
+  coord_cartesian(ylim=c(0,1))
+  
+
+
+
+```
+
+:::::
+
+# Produção Industrial
+
+::: panel-tabset
+
+## Total
+
+::: panel-tabset
+
+### Nível
+
+```{r total_nivel}
+#| echo: false
+#| warning: false 
+
+indic<-c("1 Indústria geral")
+
+label<-c("Total", "MA(3)")
+
+source<-c("Fonte: IBGE e elaboração do autor.")
+
+title<-paste0("PIM | Produção Industrial - ", paste(label[1], collapse = ", "))
+
+subtitle<-paste0("Nível SA | Última Leitura: ")
+
+all.sa %>% select(., c("Dates", indic)) %>%
+  mutate(ma3=zoo::rollmean(.[[2]], k=3, fill=NA, align='right')) %>%
+  as.data.frame() %>% 
+  line.plot(.,title=title, subtitle=subtitle,label=label, source=source, palette=palette, last=F) 
+
+
+
+```
+
+### MoM
+
+```{r total_mom}
+#| echo: false
+#| warning: false 
+
+label<-c("Total")
+
+source<-c("Fonte: IBGE e elaboração do autor.")
+
+title<-paste0("PIM | Produção Industrial - ", paste(label[1], collapse = ", "))
+
+subtitle<-paste0("MoM%-SA | Última Leitura: ")
+
+all.mom %>% select(., c(Dates, indic)) %>% 
+  filter(Dates>=ymd("2023-01-01")) %>% 
+  as.data.frame() %>%
+  bar.plot(., 
+           title=title, subtitle=subtitle, label=label, source=source, palette=palette)
+
+```
+
+### QoQ
+
+```{r total_qoq}
+#| echo: false
+#| warning: false 
+
+label<-c("Total")
+
+source<-c("Fonte: IBGE e elaboração do autor.")
+
+title<-paste0("PIM | Produção Industrial - ", paste(label[1], collapse = ", "))
+
+subtitle<-paste0("QoQ%-SA | Última Leitura: ")
+
+all.qoq %>% select(., c(Dates, indic)) %>% 
+  filter(Dates>=ymd("2023-01-01")) %>% 
+  as.data.frame() %>%
+  bar.plot(., 
+           title=title, subtitle=subtitle, label=label, source=source, palette=palette)
+
+```
+
+:::
+
+## Transformação
+
+::: panel-tabset
+
+### Nível
+
+```{r transf_nivel}
+#| echo: false
+#| warning: false 
+
+indic<-c("3 Indústrias de transformação")
+
+label<-c("Transformação", "MA(3)")
+
+source<-c("Fonte: IBGE e elaboração do autor.")
+
+title<-paste0("PIM | Produção Industrial - ", paste(label[1], collapse = ", "))
+
+subtitle<-paste0("Nível SA | Última Leitura: ")
+
+all.sa %>% select(., c("Dates", indic)) %>%
+  mutate(ma3=zoo::rollmean(.[[2]], k=3, fill=NA, align='right')) %>%
+  as.data.frame() %>% 
+  line.plot(.,title=title, subtitle=subtitle,label=label, source=source, palette=palette, last=F) 
+
+
+
+```
+
+### MoM
+
+```{r transf_mom}
+#| echo: false
+#| warning: false 
+
+source<-c("Fonte: IBGE e elaboração do autor.")
+
+title<-paste0("PIM | Produção Industrial - ", paste(label[1], collapse = ", "))
+
+subtitle<-paste0("MoM%-SA | Última Leitura: ")
+
+all.mom %>% select(., c(Dates, indic)) %>% 
+  filter(Dates>=ymd("2023-01-01")) %>% 
+  as.data.frame() %>%
+  bar.plot(., 
+           title=title, subtitle=subtitle, label=label, source=source, palette=palette)
+
+```
+
+### QoQ
+
+```{r transf_qoq}
+#| echo: false
+#| warning: false 
+
+source<-c("Fonte: IBGE e elaboração do autor.")
+
+title<-paste0("PIM | Produção Industrial - ", paste(label[1], collapse = ", "))
+
+subtitle<-paste0("QoQ%-SA | Última Leitura: ")
+
+all.qoq %>% select(., c(Dates, indic)) %>% 
+  filter(Dates>=ymd("2023-01-01")) %>% 
+  as.data.frame() %>%
+  bar.plot(., 
+           title=title, subtitle=subtitle, label=label, source=source, palette=palette)
+
+```
+
+:::
+
+## Extrativa
+
+::: panel-tabset
+
+### Nível
+
+```{r extrativa_nivel}
+#| echo: false
+#| warning: false 
+
+indic<-c("2 Indústrias extrativas")
+
+label<-c("Extrativas", "MA(3)")
+
+source<-c("Fonte: IBGE e elaboração do autor.")
+
+title<-paste0("PIM | Produção Industrial - ", paste(label[1], collapse = ", "))
+
+subtitle<-paste0("Nível SA | Última Leitura: ")
+
+all.sa %>% select(., c("Dates", indic)) %>%
+  mutate(ma3=zoo::rollmean(.[[2]], k=3, fill=NA, align='right')) %>%
+  as.data.frame() %>% 
+  line.plot(.,title=title, subtitle=subtitle,label=label, source=source, palette=palette, last=F) 
+
+
+
+```
+
+### MoM
+
+```{r extrativa_mom}
+#| echo: false
+#| warning: false 
+
+source<-c("Fonte: IBGE e elaboração do autor.")
+
+title<-paste0("PIM | Produção Industrial - ", paste(label[1], collapse = ", "))
+
+subtitle<-paste0("MoM%-SA | Última Leitura: ")
+
+all.mom %>% select(., c(Dates, indic)) %>% 
+  filter(Dates>=ymd("2023-01-01")) %>% 
+  as.data.frame() %>%
+  bar.plot(., 
+           title=title, subtitle=subtitle, label=label, source=source, palette=palette)
+
+```
+
+### QoQ
+
+```{r extrativa_qoq}
+#| echo: false
+#| warning: false 
+
+
+source<-c("Fonte: IBGE e elaboração do autor.")
+
+title<-paste0("PIM | Produção Industrial - ", paste(label[1], collapse = ", "))
+
+subtitle<-paste0("QoQ%-SA | Última Leitura: ")
+
+all.qoq %>% select(., c(Dates, indic)) %>% 
+  filter(Dates>=ymd("2023-01-01")) %>% 
+  as.data.frame() %>%
+  bar.plot(., 
+           title=title, subtitle=subtitle, label=label, source=source, palette=palette)
+
+```
+
+
+:::
+
+:::
+
+# Categorias Econômicas
+
+::: panel-tabset
+
+## Bens de Capital
+
+::: panel-tabset
+
+### Nível
+
+```{r bk_nivel}
+#| echo: false
+#| warning: false 
+
+indic<-c("1 Bens de capital")
+
+label<-c("Bens de capital", "MA(3)")
+
+source<-c("Fonte: IBGE e elaboração do autor.")
+
+title<-paste0("PIM | Produção Industrial - ", paste(label[1], collapse = ", "))
+
+subtitle<-paste0("Nível SA | Última Leitura: ")
+
+all.sa %>% select(., c("Dates", indic)) %>%
+  mutate(ma3=zoo::rollmean(.[[2]], k=3, fill=NA, align='right')) %>%
+  as.data.frame() %>% 
+  line.plot(.,title=title, subtitle=subtitle,label=label, source=source, palette=palette, last=F) 
+
+
+
+```
+
+### MoM
+
+```{r bk_mom}
+#| echo: false
+#| warning: false 
+
+title<-paste0("PIM | Produção Industrial - ", paste(label[1], collapse = ", "))
+
+subtitle<-paste0("MoM%-SA | Última Leitura: ")
+
+all.mom %>% select(., c(Dates, indic)) %>% 
+  filter(Dates>=ymd("2023-01-01")) %>% 
+  as.data.frame() %>%
+  bar.plot(., 
+           title=title, subtitle=subtitle, label=label, source=source, palette=palette)
+
+```
+
+### QoQ
+
+```{r bk_qoq}
+#| echo: false
+#| warning: false 
+
+
+title<-paste0("PIM | Produção Industrial - ", paste(label[1], collapse = ", "))
+
+subtitle<-paste0("QoQ%-SA | Última Leitura: ")
+
+all.qoq %>% select(., c(Dates, indic)) %>% 
+  filter(Dates>=ymd("2023-01-01")) %>% 
+  as.data.frame() %>%
+  bar.plot(., 
+           title=title, subtitle=subtitle, label=label, source=source, palette=palette)
+
+```
+
+### YoY
+
+```{r bk_yoy}
+#| echo: false
+#| warning: false 
+
+label<-c(label[1], "MA(3)")
+
+source<-c("Fonte: IBGE e elaboração do autor.")
+
+title<-paste0("PIM | Produção Industrial - ", paste(label[1], collapse = ", "))
+
+subtitle<-paste0("YoY%-NSA | Última Leitura: ")
+
+all.yoy %>% select(., c("Dates", indic)) %>%
+  filter(Dates>=ymd("2012-01-01")) %>%
+  mutate(ma3=zoo::rollmean(.[[2]], k=3, fill=NA, align='right')) %>%
+  as.data.frame() %>% 
+  line.plot(.,title=title, subtitle=subtitle,label=label, source=source, palette=palette, last=T) +
+  coord_cartesian(ylim = c(-50,50))
+
+
+```
+
+:::
+
+## Bens intermediários
+
+::: panel-tabset
+
+### Nível
+
+```{r intermed_nivel}
+#| echo: false
+#| warning: false 
+
+indic<-c("2 Bens intermediários")
+
+label<-c("Bens intermediários", "MA(3)")
+
+source<-c("Fonte: IBGE e elaboração do autor.")
+
+title<-paste0("PIM | Produção Industrial - ", paste(label[1], collapse = ", "))
+
+subtitle<-paste0("Nível SA | Última Leitura: ")
+
+all.sa %>% select(., c("Dates", indic)) %>%
+  mutate(ma3=zoo::rollmean(.[[2]], k=3, fill=NA, align='right')) %>%
+  as.data.frame() %>% 
+  line.plot(.,title=title, subtitle=subtitle,label=label, source=source, palette=palette, last=F) 
+
+
+
+```
+
+### MoM
+
+```{r intermed_mom}
+#| echo: false
+#| warning: false 
+
+title<-paste0("PIM | Produção Industrial - ", paste(label[1], collapse = ", "))
+
+subtitle<-paste0("MoM%-SA | Última Leitura: ")
+
+all.mom %>% select(., c(Dates, indic)) %>% 
+  filter(Dates>=ymd("2023-01-01")) %>% 
+  as.data.frame() %>%
+  bar.plot(., 
+           title=title, subtitle=subtitle, label=label, source=source, palette=palette)
+
+```
+
+### QoQ
+
+```{r intermed_qoq}
+#| echo: false
+#| warning: false 
+
+
+title<-paste0("PIM | Produção Industrial - ", paste(label[1], collapse = ", "))
+
+subtitle<-paste0("QoQ%-SA | Última Leitura: ")
+
+all.qoq %>% select(., c(Dates, indic)) %>% 
+  filter(Dates>=ymd("2023-01-01")) %>% 
+  as.data.frame() %>%
+  bar.plot(., 
+           title=title, subtitle=subtitle, label=label, source=source, palette=palette)
+
+```
+
+### YoY
+
+```{r intermed_yoy}
+#| echo: false
+#| warning: false 
+
+label<-c(label[1], "MA(3)")
+
+source<-c("Fonte: IBGE e elaboração do autor.")
+
+title<-paste0("PIM | Produção Industrial - ", paste(label[1], collapse = ", "))
+
+subtitle<-paste0("YoY%-NSA | Última Leitura: ")
+
+all.yoy %>% select(., c("Dates", indic)) %>%
+  filter(Dates>=ymd("2012-01-01")) %>%
+  mutate(ma3=zoo::rollmean(.[[2]], k=3, fill=NA, align='right')) %>%
+  as.data.frame() %>% 
+  line.plot(.,title=title, subtitle=subtitle,label=label, source=source, palette=palette, last=T) +
+  coord_cartesian(ylim = c(-50,50))
+
+
+```
+
+:::
+
+## Bens de consumo
+
+::: panel-tabset
+
+### Nível
+
+```{r bensconsumo_nivel}
+#| echo: false
+#| warning: false 
+
+indic<-c("3 Bens de consumo")
+
+label<-c("Bens de consumo", "MA(3)")
+
+source<-c("Fonte: IBGE e elaboração do autor.")
+
+title<-paste0("PIM | Produção Industrial - ", paste(label[1], collapse = ", "))
+
+subtitle<-paste0("Nível SA | Última Leitura: ")
+
+all.sa %>% select(., c("Dates", indic)) %>%
+  mutate(ma3=zoo::rollmean(.[[2]], k=3, fill=NA, align='right')) %>%
+  as.data.frame() %>% 
+  line.plot(.,title=title, subtitle=subtitle,label=label, source=source, palette=palette, last=F) 
+
+
+
+```
+
+### MoM
+
+```{r bensconsumo_mom}
+#| echo: false
+#| warning: false 
+
+title<-paste0("PIM | Produção Industrial - ", paste(label[1], collapse = ", "))
+
+subtitle<-paste0("MoM%-SA | Última Leitura: ")
+
+all.mom %>% select(., c(Dates, indic)) %>% 
+  filter(Dates>=ymd("2023-01-01")) %>% 
+  as.data.frame() %>%
+  bar.plot(., 
+           title=title, subtitle=subtitle, label=label, source=source, palette=palette)
+
+```
+
+### QoQ
+
+```{r bensconsumo_qoq}
+#| echo: false
+#| warning: false 
+
+
+title<-paste0("PIM | Produção Industrial - ", paste(label[1], collapse = ", "))
+
+subtitle<-paste0("QoQ%-SA | Última Leitura: ")
+
+all.qoq %>% select(., c(Dates, indic)) %>% 
+  filter(Dates>=ymd("2023-01-01")) %>% 
+  as.data.frame() %>%
+  bar.plot(., 
+           title=title, subtitle=subtitle, label=label, source=source, palette=palette)
+
+```
+
+### YoY
+
+```{r bensconsumo_yoy}
+#| echo: false
+#| warning: false 
+
+label<-c(label[1], "MA(3)")
+
+source<-c("Fonte: IBGE e elaboração do autor.")
+
+title<-paste0("PIM | Produção Industrial - ", paste(label[1], collapse = ", "))
+
+subtitle<-paste0("YoY%-NSA | Última Leitura: ")
+
+all.yoy %>% select(., c("Dates", indic)) %>%
+  filter(Dates>=ymd("2012-01-01")) %>%
+  mutate(ma3=zoo::rollmean(.[[2]], k=3, fill=NA, align='right')) %>%
+  as.data.frame() %>% 
+  line.plot(.,title=title, subtitle=subtitle,label=label, source=source, palette=palette, last=T) +
+  coord_cartesian(ylim = c(-50,50))
+
+
+```
+
+
+### Duráveis 
+
+```{r duraveis_nivel}
+#| echo: false
+#| warning: false 
+
+indic<-c("31 Bens de consumo duráveis")
+
+label<-c("Bens de consumo duráveis", "MA(3)")
+
+source<-c("Fonte: IBGE e elaboração do autor.")
+
+title<-paste0("PIM | Produção Industrial - ", paste(label[1], collapse = ", "))
+
+subtitle<-paste0("Nível SA | Última Leitura: ")
+
+all.sa %>% select(., c("Dates", indic)) %>%
+  mutate(ma3=zoo::rollmean(.[[2]], k=3, fill=NA, align='right')) %>%
+  as.data.frame() %>% 
+  line.plot(.,title=title, subtitle=subtitle,label=label, source=source, palette=palette, last=F) 
+
+
+
+```
+
+### Semiduráveis e não duráveis 
+
+```{r naoduraveis_nivel}
+#| echo: false
+#| warning: false 
+
+indic<-c("32 Bens de consumo semiduráveis e não duráveis")
+
+label<-c("Bens de consumo semiduráveis e não duráveis", "MA(3)")
+
+source<-c("Fonte: IBGE e elaboração do autor.")
+
+title<-paste0("PIM | Produção Industrial - ", paste(label[1], collapse = ", "))
+
+subtitle<-paste0("Nível SA | Última Leitura: ")
+
+all.sa %>% select(., c("Dates", indic)) %>%
+  mutate(ma3=zoo::rollmean(.[[2]], k=3, fill=NA, align='right')) %>%
+  as.data.frame() %>% 
+  line.plot(.,title=title, subtitle=subtitle,label=label, source=source, palette=palette, last=F) 
+
+
+
+```
+
+:::
+
+::::: 
+
+# Selecionados
+
+::: panel-tabset
+
+## Produção de Veículos
+
+```{r veiculos_nivel}
+#| echo: false
+#| warning: false 
+
+indic<-c("3.29 Fabricação de veículos automotores, reboques e carrocerias")
+
+label<-c("Fabricação de veículos automotores, reboques e carrocerias", "MA(3)")
+
+source<-c("Fonte: IBGE e elaboração do autor.")
+
+title<-paste0("PIM | Produção Industrial - ", paste(label[1], collapse = ", "))
+
+subtitle<-paste0("Nível SA | Última Leitura: ")
+
+all.sa %>% select(., c("Dates", indic)) %>%
+  mutate(ma3=zoo::rollmean(.[[2]], k=3, fill=NA, align='right')) %>%
+  as.data.frame() %>% 
+  line.plot(.,title=title, subtitle=subtitle,label=label, source=source, palette=palette, last=F) 
+
+
+
+```
+
+## Máquinas e equipamentos
+
+```{r maquinas_nivel}
+#| echo: false
+#| warning: false 
+
+indic<-c("3.28 Fabricação de máquinas e equipamentos")
+
+label<-c("Fabricação de máquinas e equipamentos", "MA(3)")
+
+source<-c("Fonte: IBGE e elaboração do autor.")
+
+title<-paste0("PIM | Produção Industrial - ", paste(label[1], collapse = ", "))
+
+subtitle<-paste0("Nível SA | Última Leitura: ")
+
+all.sa %>% select(., c("Dates", indic)) %>%
+  mutate(ma3=zoo::rollmean(.[[2]], k=3, fill=NA, align='right')) %>%
+  as.data.frame() %>% 
+  line.plot(.,title=title, subtitle=subtitle,label=label, source=source, palette=palette, last=F) 
+
+
+
+```
+
+## Produtos alimentícios
+
+```{r alimenticios_nivel}
+#| echo: false
+#| warning: false 
+
+indic<-c("3.10 Fabricação de produtos alimentícios")
+
+label<-c("Fabricação de produtos alimentícios", "MA(3)")
+
+source<-c("Fonte: IBGE e elaboração do autor.")
+
+title<-paste0("PIM | Produção Industrial - ", paste(label[1], collapse = ", "))
+
+subtitle<-paste0("Nível SA | Última Leitura: ")
+
+all.sa %>% select(., c("Dates", indic)) %>%
+  mutate(ma3=zoo::rollmean(.[[2]], k=3, fill=NA, align='right')) %>%
+  as.data.frame() %>% 
+  line.plot(.,title=title, subtitle=subtitle,label=label, source=source, palette=palette, last=F) 
+
+
+
+```
+
+## Fabricação de bebidas
+
+```{r bebidas_nivel}
+#| echo: false
+#| warning: false 
+
+indic<-c("3.11 Fabricação de bebidas")
+
+label<-c("Fabricação de bebidas", "MA(3)")
+
+source<-c("Fonte: IBGE e elaboração do autor.")
+
+title<-paste0("PIM | Produção Industrial - ", paste(label[1], collapse = ", "))
+
+subtitle<-paste0("Nível SA | Última Leitura: ")
+
+all.sa %>% select(., c("Dates", indic)) %>%
+  mutate(ma3=zoo::rollmean(.[[2]], k=3, fill=NA, align='right')) %>%
+  as.data.frame() %>% 
+  line.plot(.,title=title, subtitle=subtitle,label=label, source=source, palette=palette, last=F) 
+
+
+
+```
+
+
+:::

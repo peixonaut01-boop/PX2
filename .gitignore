@@ -1,0 +1,52 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+.venv
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Data files (local only - not for Git)
+data/kalshi/
+data/processed/EXAMPLE.parquet
+frontend/data/processed/
+
+# Temporary folders
+APIs de uso/
+APIs de uso tiiingo aqui/
+backend/
+database/
+
+# IDE
+.vscode/
+.idea/
+.cursor/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment variables
+.env
+.env.local
+
+# Next.js
+.next/
+out/
+build/
+
+# Logs
+*.log
+

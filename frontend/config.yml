@@ -1,0 +1,31 @@
+backend:
+  name: git-gateway
+  branch: main
+
+local_backend: true
+
+# Configuração para desenvolvimento local
+site_url: http://localhost:3000
+
+media_folder: "public/images/uploads"
+public_folder: "/images/uploads"
+
+
+slug:
+  encoding: "ascii"
+  clean_accents: true
+  sanitize_replacement: "-"
+
+collections:
+  - name: "news"
+    label: "Notícias"
+    folder: "content/news"
+    create: true
+    # Força o slug a ser baseado no título mas limpo
+    slug: "{{slug}}"
+    fields:
+      - { label: "Título", name: "title", widget: "string" }
+      - { label: "Data de Publicação", name: "date", widget: "datetime" }
+      - { label: "Imagem de Capa", name: "thumbnail", widget: "image", required: false }
+      - { label: "Resumo", name: "description", widget: "text" }
+      - { label: "Corpo da Notícia", name: "body", widget: "markdown", required: false }

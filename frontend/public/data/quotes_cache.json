@@ -1,0 +1,15 @@
+{
+  "PETR4": { "price": 36.50, "change": 0.5, "changePercent": 1.39, "currency": "BRL", "updated": "2024-12-07" },
+  "VALE3": { "price": 58.20, "change": -0.3, "changePercent": -0.51, "currency": "BRL", "updated": "2024-12-07" },
+  "BBAS3": { "price": 27.80, "change": 0.2, "changePercent": 0.72, "currency": "BRL", "updated": "2024-12-07" },
+  "ITUB4": { "price": 32.40, "change": 0.4, "changePercent": 1.25, "currency": "BRL", "updated": "2024-12-07" },
+  "ABEV3": { "price": 12.90, "change": -0.1, "changePercent": -0.77, "currency": "BRL", "updated": "2024-12-07" },
+  "AAPL": { "price": 193.15, "change": 2.34, "changePercent": 1.23, "currency": "USD", "updated": "2024-12-07" },
+  "MSFT": { "price": 378.91, "change": 4.56, "changePercent": 1.22, "currency": "USD", "updated": "2024-12-07" },
+  "TSLA": { "price": 352.56, "change": -3.21, "changePercent": -0.90, "currency": "USD", "updated": "2024-12-07" },
+  "AMZN": { "price": 184.25, "change": 1.87, "changePercent": 1.03, "currency": "USD", "updated": "2024-12-07" },
+  "GOOGL": { "price": 175.98, "change": 2.15, "changePercent": 1.24, "currency": "USD", "updated": "2024-12-07" },
+  "META": { "price": 585.25, "change": 5.43, "changePercent": 0.94, "currency": "USD", "updated": "2024-12-07" },
+  "NVDA": { "price": 138.25, "change": 3.21, "changePercent": 2.38, "currency": "USD", "updated": "2024-12-07" }
+}
+

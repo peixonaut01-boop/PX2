@@ -1,0 +1,80 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+/* Enable class-based dark mode for Tailwind CSS v4 */
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
+}
+
+/* Transição suave apenas para cores de fundo e texto */
+html {
+  color-scheme: light dark;
+}
+
+/* Garantir que classes dark mode sejam incluídas no build */
+.dark {
+  color-scheme: dark;
+}
+
+
+
+@theme {
+  --animate-scroll: scroll 40s linear infinite;
+
+  @keyframes scroll {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+}
+
+/* ===== Painel Admin (/admin) ===== */
+
+.admin-layout {
+  min-height: 100vh;
+  display: flex;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background-color: #f3f4f6;
+}
+
+.admin-sidebar {
+  width: 280px;
+  border-right: 1px solid #e5e7eb;
+  padding: 16px;
+  background-color: #ffffff;
+}
+
+.admin-main {
+  flex: 1;
+  padding: 24px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+@media (max-width: 768px) {
+  .admin-layout {
+    flex-direction: column;
+  }
+
+  .admin-sidebar {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid #e5e7eb;
+    position: sticky;
+    top: 0;
+    z-index: 20;
+  }
+
+  .admin-main {
+    max-width: 100%;
+    padding: 16px;
+  }
+}
+
