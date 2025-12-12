@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "last_updated": "2025-12-12T07:26:14.826221Z",
+    "last_updated": "2025-12-12T16:32:38.062752Z",
     "report_count": 4
   },
   "reports": [
@@ -8,15 +8,16 @@
       "id": "ipca-2025-11-01",
       "indicator": "IPCA",
       "reference_date": "2025-11-01",
-      "headline": "IPCA variou 0,18% em novembro de 01",
+      "headline": "IPCA variou 0,18% em novembro de 2025",
       "metrics": {
         "mom": 0.18,
         "yoy": 4.46,
         "servicos": 0.6,
         "alimentacao": -0.2,
+        "ex3": null,
         "administrados": 0.21
       },
-      "analysis": "O IPCA de novembro de 01 registrou variação de 0,18%. Na composição, os preços administrados variaram 0,21% e serviços 0,60%.",
+      "analysis": "O IPCA de novembro de 2025 registrou variação de 0,18%. Na composição, os preços administrados variaram 0,21% e serviços 0,60%.",
       "chart_data": [
         {
           "date": "dec/24",
@@ -70,20 +71,20 @@
       "link": "/indicators/ipca",
       "source_title": "Dados oficiais do IBGE (SIDRA)",
       "source_url": "https://sidra.ibge.gov.br/home/ipca",
-      "generated_at": "2025-12-12T07:26:14.792494Z"
+      "generated_at": "2025-12-12T16:32:38.021601Z"
     },
     {
       "id": "pim-2025-10-01",
       "indicator": "PIM",
       "reference_date": "2025-10-01",
-      "headline": "Produção Industrial variou 0,09% em outubro de 01",
+      "headline": "Produção Industrial variou 0,09% em outubro de 2025",
       "metrics": {
         "mom": 0.09,
         "yoy": -0.48,
         "extrativas": 3.56,
         "transformacao": -0.58
       },
-      "analysis": "A produção industrial variou 0,09% em outubro de 01. A indústria extrativa variou 3,56%, enquanto a de transformação registrou -0,58%.",
+      "analysis": "A produção industrial variou 0,09% em outubro de 2025. A indústria extrativa variou 3,56%, enquanto a de transformação registrou -0,58%.",
       "chart_data": [
         {
           "date": "nov/24",
@@ -137,105 +138,101 @@
       "link": "/indicators/pim",
       "source_title": "Dados oficiais do IBGE (SIDRA)",
       "source_url": "https://sidra.ibge.gov.br/home/pim",
-      "generated_at": "2025-12-12T07:26:14.809848Z"
+      "generated_at": "2025-12-12T16:32:38.062367Z"
     },
     {
       "id": "pmc-2025-10-01",
       "indicator": "PMC",
       "reference_date": "2025-10-01",
-      "headline": "Varejo cresce 0,46% em outubro e supera expectativas",
+      "headline": "Varejo (PMC) variou 0,46% em outubro de 2025",
       "metrics": {
         "mom": 0.46,
         "mom_ampliado": 1.11,
         "yoy": 1.06
       },
-      "analysis": "O volume de vendas do varejo registrou alta de 0,46% em outubro de 2025, interrompendo a sequência negativa. O varejo ampliado, que inclui veículos e construção, teve desempenho ainda mais forte (+1,11%), sinalizando uma retomada disseminada do consumo neste início de quarto trimestre.",
+      "analysis": "O volume de vendas do varejo variou 0,46% em outubro de 2025. O varejo ampliado registrou 1,11%.",
       "chart_data": [
         {
           "date": "nov/24",
-          "value": -0.71
+          "value": -0.16
         },
         {
           "date": "dec/24",
-          "value": -0.39
+          "value": -0.19
         },
         {
           "date": "jan/25",
-          "value": 0.15
+          "value": 0.18
         },
         {
           "date": "feb/25",
-          "value": -0.02
+          "value": 0.53
         },
         {
           "date": "mar/25",
-          "value": 1.83
+          "value": 0.72
         },
         {
           "date": "apr/25",
-          "value": -0.75
+          "value": -0.31
         },
         {
           "date": "may/25",
-          "value": -0.51
+          "value": -0.37
         },
         {
           "date": "jun/25",
-          "value": 0.06
+          "value": -0.06
         },
         {
           "date": "jul/25",
-          "value": -0.13
+          "value": -0.19
         },
         {
           "date": "aug/25",
-          "value": 0.73
+          "value": 0.12
         },
         {
           "date": "sep/25",
-          "value": -0.39
+          "value": -0.19
         },
         {
           "date": "oct/25",
           "value": 0.46
         }
       ],
-      "link": "/indicators/varejo",
+      "link": "/indicators/pmc",
       "source_title": "Dados oficiais do IBGE (SIDRA)",
-      "source_url": "https://sidra.ibge.gov.br/home/varejo",
-      "generated_at": "2025-12-12T07:26:14.809848Z"
+      "source_url": "https://sidra.ibge.gov.br/home/pmc",
+      "generated_at": "2025-12-12T16:32:38.033689Z"
     },
     {
-      "id": "pms-2025-09-01",
+      "id": "pms-2025-10-01",
       "indicator": "PMS",
-      "reference_date": "2025-09-01",
-      "headline": "Volume de serviços variou 0,60% em setembro de 01",
+      "reference_date": "2025-10-01",
+      "headline": "Setor de Serviços variou 0,29% em outubro de 2025",
       "metrics": {
-        "mom": 0.6,
-        "yoy": 4.1,
-        "familias": -0.52
+        "mom": 0.29,
+        "yoy": 2.16,
+        "familias": 0.05
       },
-      "analysis": "O volume de serviços variou 0,60% em setembro de 01. Os serviços prestados às famílias registraram -0,52%.",
+      "analysis": "O volume de serviços variou 0,29% em outubro de 2025. Os serviços prestados às famílias registraram 0,05%.",
       "chart_data": [
         {
-          "date": "oct/24",
-          "value": 1.24
-        },
-        {
           "date": "nov/24",
-          "value": -1.26
+          "value": -1.22
         },
         {
           "date": "dec/24",
-          "value": 0.16
+          "value": 0.14
         },
         {
           "date": "jan/25",
-          "value": -0.41
+          "value": -0.38
         },
         {
           "date": "feb/25",
-          "value": 0.88
+          "value": 0.84
         },
         {
           "date": "mar/25",
@@ -243,33 +240,37 @@
         },
         {
           "date": "apr/25",
-          "value": 0.41
+          "value": 0.34
         },
         {
           "date": "may/25",
-          "value": 0.12
+          "value": 0.21
         },
         {
           "date": "jun/25",
-          "value": 0.48
+          "value": 0.42
         },
         {
           "date": "jul/25",
-          "value": 0.25
+          "value": 0.27
         },
         {
           "date": "aug/25",
-          "value": 0.19
+          "value": 0.2
         },
         {
           "date": "sep/25",
-          "value": 0.6
+          "value": 0.69
+        },
+        {
+          "date": "oct/25",
+          "value": 0.29
         }
       ],
       "link": "/indicators/pms",
       "source_title": "Dados oficiais do IBGE (SIDRA)",
       "source_url": "https://sidra.ibge.gov.br/home/pms",
-      "generated_at": "2025-12-12T07:26:14.809848Z"
+      "generated_at": "2025-12-12T16:32:38.043793Z"
     }
   ]
 }

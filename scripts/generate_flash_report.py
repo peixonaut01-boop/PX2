@@ -63,7 +63,11 @@ def call_groq_llm(indicator, context_str):
         "Você é um Economista Sênior (Senior Market Analyst) da PX Economics. "
         "Sua função é escrever relatórios 'Flash' curtos e impactantes sobre indicadores econômicos do Brasil. "
         "O tone deve ser profissional, direto e analítico (estilo Bloomberg/Valor Econômico). "
-        "EVITE: clichês, robótica, ou excesso de adjetivos. Foque nos números e no 'driver' do resultado."
+        "regras CRÍTICAS: "
+        "1. Nunca invente dados. "
+        "2. SEMPRE use o ano completo (ex: 2024, 2025). NUNCA use 'de 01', 'de 24', 'de 25'. "
+        "3. Se o ano for 2025, escreva 'de 2025'. Exemplo: 'novembro de 2025'. "
+        "Foque nos números e no 'driver' do resultado."
     )
     
     user_prompt = f"""
@@ -86,7 +90,7 @@ def call_groq_llm(indicator, context_str):
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_prompt}
         ],
-        "temperature": 0.3,
+        "temperature": 0.1,  # Lower temperature for more deterministic output
         "max_tokens": 300,
         "response_format": {"type": "json_object"}
     }
@@ -104,7 +108,15 @@ def call_groq_llm(indicator, context_str):
         with urllib.request.urlopen(req) as response:
             result = json.loads(response.read().decode('utf-8'))
             content = result['choices'][0]['message']['content']
-            return json.loads(content)
+            parsed = json.loads(content)
+            
+            # Validation: Check for bad year formats
+            headline = parsed.get('headline', '')
+            if 'de 01' in headline or 'de 00' in headline:
+                print(f"Warning: Detected Hallucinated Year in headline: '{headline}'. Falling back to template.")
+                return None
+                
+            return parsed
             
     except Exception as e:
         print(f"LLM Generation Failed for {indicator}: {e}")
