@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "last_updated": "2025-12-12T17:23:46.144335Z",
+    "last_updated": "2025-12-12T17:43:49.564261Z",
     "report_count": 4
   },
   "reports": [
@@ -71,7 +71,7 @@
       "link": "/indicators/ipca",
       "source_title": "Dados oficiais do IBGE (SIDRA)",
       "source_url": "https://sidra.ibge.gov.br/home/ipca",
-      "generated_at": "2025-12-12T17:23:46.107607Z"
+      "generated_at": "2025-12-12T17:43:49.529761Z"
     },
     {
       "id": "pim-2025-10-01",
@@ -138,7 +138,7 @@
       "link": "/indicators/pim",
       "source_title": "Dados oficiais do IBGE (SIDRA)",
       "source_url": "https://sidra.ibge.gov.br/home/pim",
-      "generated_at": "2025-12-12T17:23:46.144159Z"
+      "generated_at": "2025-12-12T17:43:49.564087Z"
     },
     {
       "id": "pmc-2025-10-01",
@@ -204,7 +204,7 @@
       "link": "/indicators/pmc",
       "source_title": "Dados oficiais do IBGE (SIDRA)",
       "source_url": "https://sidra.ibge.gov.br/home/pmc",
-      "generated_at": "2025-12-12T17:23:46.116542Z"
+      "generated_at": "2025-12-12T17:43:49.538896Z"
     },
     {
       "id": "pms-2025-10-01",
@@ -270,7 +270,7 @@
       "link": "/indicators/pms",
       "source_title": "Dados oficiais do IBGE (SIDRA)",
       "source_url": "https://sidra.ibge.gov.br/home/pms",
-      "generated_at": "2025-12-12T17:23:46.125883Z"
+      "generated_at": "2025-12-12T17:43:49.547208Z"
     }
   ]
 }
