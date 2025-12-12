@@ -74,7 +74,7 @@
       "Semiduráveis": -0.04,
       "Duráveis": 0.23,
       "Tradables": 0.32,
-      "Non-tradables": 0.0
+      "Non-tradables": -0
     },
     {
       "data_date": "2020-04-15",
@@ -157,7 +157,7 @@
       "IPCA15": 0.02,
       "ex-combustíveis": 0.04,
       "ex-alimentação": -0.09,
-      "Administrados": 0.0,
+      "Administrados": -0,
       "Combustíveis": -0.33,
       "Energia elétrica": -0.48,
       "Livres": 0.03,
@@ -222,7 +222,7 @@
       "8 - Educação": -0.07,
       "9 - Comunicação": 0.46,
       "Livres ex-alimentos": 0.01,
-      "Não duráveis": 0.0,
+      "Não duráveis": 0,
       "Semiduráveis": -0.86,
       "Duráveis": 0.51,
       "Tradables": 0.38,
@@ -350,7 +350,7 @@
       "Administrados": 0.26,
       "Combustíveis": 1.46,
       "Energia elétrica": -0.04,
-      "Livres": 1.0,
+      "Livres": 1,
       "Alimentação no domicílio": 2.69,
       "In natura": 6.17,
       "Industrializados": 0.89,
@@ -368,13 +368,13 @@
       "2 - Habitação": 0.34,
       "3 - Residência": 1.4,
       "4 - Vestuário": 0.96,
-      "5 - Transportes": 1.0,
+      "5 - Transportes": 1,
       "6 - Saúde": 0.04,
       "7 - Despesas pessoais": 0.14,
       "8 - Educação": 0.01,
       "9 - Comunicação": 0.06,
       "Livres ex-alimentos": 0.56,
-      "Não duráveis": 2.0,
+      "Não duráveis": 2,
       "Semiduráveis": 0.84,
       "Duráveis": 1.12,
       "Tradables": 1.59,
@@ -388,7 +388,7 @@
       "Administrados": 1.24,
       "Combustíveis": 2.4,
       "Energia elétrica": 4.08,
-      "Livres": 1.0,
+      "Livres": 1,
       "Alimentação no domicílio": 2.57,
       "In natura": 3.28,
       "Industrializados": 0.42,
@@ -402,7 +402,7 @@
       "Passagem aérea": 28.31,
       "Ex0": 0.6,
       "Ex3": 0.27,
-      "1 - Alimentação": 2.0,
+      "1 - Alimentação": 2,
       "2 - Habitação": 1.5,
       "3 - Residência": 1.35,
       "4 - Vestuário": -0.45,
@@ -481,7 +481,7 @@
       "1 - Alimentação": 0.56,
       "2 - Habitação": -0.74,
       "3 - Residência": 1.01,
-      "4 - Vestuário": 0.0,
+      "4 - Vestuário": 0,
       "5 - Transportes": 1.1,
       "6 - Saúde": 0.46,
       "7 - Despesas pessoais": 0.15,
@@ -561,7 +561,7 @@
       "5 - Transportes": 1.76,
       "6 - Saúde": 0.44,
       "7 - Despesas pessoais": 0.05,
-      "8 - Educação": 0.0,
+      "8 - Educação": 0,
       "9 - Comunicação": -0.04,
       "Livres ex-alimentos": 0.22,
       "Não duráveis": 0.28,
@@ -581,13 +581,13 @@
       "Livres": 0.22,
       "Alimentação no domicílio": 0.5,
       "In natura": -2.32,
-      "Industrializados": 1.0,
+      "Industrializados": 1,
       "Ind Subjacente": 0.99,
       "Serviços": -0.38,
       "Serviços subjacentes": 0.08,
       "Serviços inerciais": -0.05,
       "Serviços intensivos em trabalho": 0.12,
-      "Serviços ex-passagem aérea": 0.0,
+      "Serviços ex-passagem aérea": -0,
       "Serviços de alimentação fora do domicílio": 0.43,
       "Passagem aérea": -28.85,
       "Ex0": 0.15,
@@ -691,7 +691,7 @@
       "ex-alimentação": 0.86,
       "Administrados": 1.44,
       "Combustíveis": 2.02,
-      "Energia elétrica": 5.0,
+      "Energia elétrica": 5,
       "Livres": 0.7,
       "Alimentação no domicílio": 1.29,
       "In natura": 4.77,
@@ -716,7 +716,7 @@
       "8 - Educação": 0.3,
       "9 - Comunicação": 0.18,
       "Livres ex-alimentos": 0.57,
-      "Não duráveis": 1.0,
+      "Não duráveis": 1,
       "Semiduráveis": 0.94,
       "Duráveis": 1.33,
       "Tradables": 0.81,
@@ -848,7 +848,7 @@
       "Alimentação no domicílio": 0.46,
       "In natura": 0.11,
       "Industrializados": 0.64,
-      "Ind Subjacente": 0.0,
+      "Ind Subjacente": 0,
       "Serviços": 0.7,
       "Serviços subjacentes": 0.66,
       "Serviços inerciais": 0.52,
@@ -865,7 +865,7 @@
       "5 - Transportes": 2.31,
       "6 - Saúde": -0.73,
       "7 - Despesas pessoais": 0.51,
-      "8 - Educação": 0.0,
+      "8 - Educação": 0,
       "9 - Comunicação": 0.14,
       "Livres ex-alimentos": 0.74,
       "Não duráveis": 0.04,
@@ -918,7 +918,7 @@
       "ex-combustíveis": 1.07,
       "ex-alimentação": 0.94,
       "Administrados": 0.09,
-      "Combustíveis": 0.0,
+      "Combustíveis": -0,
       "Energia elétrica": -0.82,
       "Livres": 1.32,
       "Alimentação no domicílio": 1.49,
@@ -927,7 +927,7 @@
       "Ind Subjacente": 0.86,
       "Serviços": 1.36,
       "Serviços subjacentes": 0.89,
-      "Serviços inerciais": 3.0,
+      "Serviços inerciais": 3,
       "Serviços intensivos em trabalho": 0.55,
       "Serviços ex-passagem aérea": 1.45,
       "Serviços de alimentação fora do domicílio": 0.45,
@@ -953,7 +953,7 @@
     {
       "data_date": "2022-03-15",
       "IPCA15": 0.95,
-      "ex-combustíveis": 1.0,
+      "ex-combustíveis": 1,
       "ex-alimentação": 0.69,
       "Administrados": 0.65,
       "Combustíveis": 0.33,
@@ -997,7 +997,7 @@
       "Combustíveis": 7.54,
       "Energia elétrica": 1.92,
       "Livres": 1.18,
-      "Alimentação no domicílio": 3.0,
+      "Alimentação no domicílio": 3,
       "In natura": 6.75,
       "Industrializados": 0.85,
       "Ind Subjacente": 0.78,
@@ -1039,7 +1039,7 @@
       "In natura": -0.87,
       "Industrializados": 1.6,
       "Ind Subjacente": 1.72,
-      "Serviços": 1.0,
+      "Serviços": 1,
       "Serviços subjacentes": 0.98,
       "Serviços inerciais": 0.44,
       "Serviços intensivos em trabalho": 0.67,
@@ -1284,7 +1284,7 @@
       "6 - Saúde": 0.91,
       "7 - Despesas pessoais": 0.27,
       "8 - Educação": 0.05,
-      "9 - Comunicação": 0.0,
+      "9 - Comunicação": 0,
       "Livres ex-alimentos": 0.42,
       "Não duráveis": 0.92,
       "Semiduráveis": 1.25,
@@ -1321,7 +1321,7 @@
       "5 - Transportes": 0.85,
       "6 - Saúde": 0.4,
       "7 - Despesas pessoais": 0.39,
-      "8 - Educação": 0.0,
+      "8 - Educação": -0,
       "9 - Comunicação": 0.18,
       "Livres ex-alimentos": 0.31,
       "Não duráveis": 0.78,
@@ -1399,7 +1399,7 @@
       "7 - Despesas pessoais": 0.63,
       "8 - Educação": 6.41,
       "9 - Comunicação": 0.78,
-      "Livres ex-alimentos": 1.0,
+      "Livres ex-alimentos": 1,
       "Não duráveis": 0.29,
       "Semiduráveis": 0.18,
       "Duráveis": 0.72,
@@ -1578,7 +1578,7 @@
       "Serviços ex-passagem aérea": 0.28,
       "Serviços de alimentação fora do domicílio": 0.46,
       "Passagem aérea": 4.7,
-      "Ex0": 0.0,
+      "Ex0": -0,
       "Ex3": 0.15,
       "1 - Alimentação": -0.4,
       "2 - Habitação": -0.94,
@@ -1707,7 +1707,7 @@
       "Não duráveis": -0.33,
       "Semiduráveis": 0.16,
       "Duráveis": -0.16,
-      "Tradables": 0.0,
+      "Tradables": 0,
       "Non-tradables": 0.34
     },
     {
@@ -1869,7 +1869,7 @@
       "ex-alimentação": 0.21,
       "Administrados": 0.7,
       "Combustíveis": 2.41,
-      "Energia elétrica": 0.0,
+      "Energia elétrica": 0,
       "Livres": 0.24,
       "Alimentação no domicílio": 1.04,
       "In natura": 3.2,
@@ -2000,7 +2000,7 @@
       "Ex3": 0.35,
       "1 - Alimentação": 0.98,
       "2 - Habitação": 0.63,
-      "3 - Residência": 0.0,
+      "3 - Residência": -0,
       "4 - Vestuário": 0.3,
       "5 - Transportes": -0.23,
       "6 - Saúde": 0.57,
@@ -2104,7 +2104,7 @@
       "Industrializados": 0.13,
       "Ind Subjacente": 0.17,
       "Serviços": 0.17,
-      "Serviços subjacentes": 0.0,
+      "Serviços subjacentes": -0,
       "Serviços inerciais": 0.22,
       "Serviços intensivos em trabalho": 0.29,
       "Serviços ex-passagem aérea": 0.08,
@@ -2233,7 +2233,7 @@
       "5 - Transportes": 0.46,
       "6 - Saúde": -0.05,
       "7 - Despesas pessoais": 1.36,
-      "8 - Educação": 0.0,
+      "8 - Educação": 0,
       "9 - Comunicação": 0.08,
       "Livres ex-alimentos": 0.41,
       "Não duráveis": 1.29,
@@ -2467,7 +2467,7 @@
       "Não duráveis": -0.21,
       "Semiduráveis": 0.34,
       "Duráveis": 0.05,
-      "Tradables": 0.0,
+      "Tradables": -0,
       "Non-tradables": 0.21
     },
     {
@@ -2499,7 +2499,7 @@
       "5 - Transportes": 0.67,
       "6 - Saúde": 0.21,
       "7 - Despesas pessoais": 0.25,
-      "8 - Educação": 0.0,
+      "8 - Educação": 0,
       "9 - Comunicação": 0.11,
       "Livres ex-alimentos": 0.38,
       "Não duráveis": -0.26,
@@ -2519,7 +2519,7 @@
       "Livres": 0.02,
       "Alimentação no domicílio": -1.02,
       "In natura": -4.06,
-      "Industrializados": 0.0,
+      "Industrializados": -0,
       "Ind Subjacente": 0.4,
       "Serviços": 0.5,
       "Serviços subjacentes": 0.55,
@@ -2596,7 +2596,7 @@
       "Alimentação no domicílio": -0.1,
       "In natura": -0.08,
       "Industrializados": -0.02,
-      "Ind Subjacente": 0.0,
+      "Ind Subjacente": 0,
       "Serviços": 0.37,
       "Serviços subjacentes": 0.24,
       "Serviços inerciais": 0.38,
@@ -3088,14 +3088,14 @@
       "Administrados": 2.28,
       "Combustíveis": -0.79,
       "Energia elétrica": 7.27,
-      "Livres": 5.0,
+      "Livres": 5,
       "Alimentação no domicílio": 18.04,
       "In natura": 31.05,
       "Industrializados": 3.12,
       "Ind Subjacente": 2.23,
       "Serviços": 1.49,
       "Serviços subjacentes": 2.62,
-      "Serviços inerciais": 2.0,
+      "Serviços inerciais": 2,
       "Serviços intensivos em trabalho": 1.31,
       "Serviços ex-passagem aérea": 2.09,
       "Serviços de alimentação fora do domicílio": 4.95,
@@ -3331,7 +3331,7 @@
       "Ex0": 5.2,
       "Ex3": 5.57,
       "1 - Alimentação": 12.82,
-      "2 - Habitação": 10.0,
+      "2 - Habitação": 10,
       "3 - Residência": 12.5,
       "4 - Vestuário": 4.45,
       "5 - Transportes": 15.25,
@@ -3429,7 +3429,7 @@
       "ex-alimentação": 9.78,
       "Administrados": 16.11,
       "Combustíveis": 42.26,
-      "Energia elétrica": 30.0,
+      "Energia elétrica": 30,
       "Livres": 8.33,
       "Alimentação no domicílio": 13.95,
       "In natura": 12.31,
@@ -3457,7 +3457,7 @@
       "Não duráveis": 13.27,
       "Semiduráveis": 7.76,
       "Duráveis": 10.72,
-      "Tradables": 12.0,
+      "Tradables": 12,
       "Non-tradables": 5.76
     },
     {
@@ -3718,7 +3718,7 @@
       "6 - Saúde": 5.35,
       "7 - Despesas pessoais": 7.05,
       "8 - Educação": 6.75,
-      "9 - Comunicação": 3.0,
+      "9 - Comunicação": 3,
       "Livres ex-alimentos": 10.98,
       "Não duráveis": 15.87,
       "Semiduráveis": 14.42,
@@ -3815,7 +3815,7 @@
       "In natura": 27.09,
       "Industrializados": 12.71,
       "Ind Subjacente": 13.39,
-      "Serviços": 9.0,
+      "Serviços": 9,
       "Serviços subjacentes": 9.4,
       "Serviços inerciais": 8.26,
       "Serviços intensivos em trabalho": 6.08,
@@ -3834,11 +3834,11 @@
       "8 - Educação": 7.08,
       "9 - Comunicação": 2.7,
       "Livres ex-alimentos": 10.74,
-      "Não duráveis": 15.0,
+      "Não duráveis": 15,
       "Semiduráveis": 15.32,
       "Duráveis": 13.09,
       "Tradables": 13.05,
-      "Non-tradables": 11.0
+      "Non-tradables": 11
     },
     {
       "data_date": "2022-09-15",
@@ -4054,7 +4054,7 @@
       "Ex3": 9.7,
       "1 - Alimentação": 10.61,
       "2 - Habitação": 0.26,
-      "3 - Residência": 6.0,
+      "3 - Residência": 6,
       "4 - Vestuário": 15.82,
       "5 - Transportes": -1.22,
       "6 - Saúde": 12.06,
@@ -4112,7 +4112,7 @@
       "ex-combustíveis": 6.52,
       "ex-alimentação": 3.57,
       "Administrados": -3.1,
-      "Combustíveis": -23.0,
+      "Combustíveis": -23,
       "Energia elétrica": -16.73,
       "Livres": 6.86,
       "Alimentação no domicílio": 5.77,
@@ -4177,7 +4177,7 @@
       "9 - Comunicação": 0.94,
       "Livres ex-alimentos": 5.77,
       "Não duráveis": 5.47,
-      "Semiduráveis": 10.0,
+      "Semiduráveis": 10,
       "Duráveis": 1.71,
       "Tradables": 5.3,
       "Non-tradables": 6.12
@@ -4197,7 +4197,7 @@
       "Ind Subjacente": 8.54,
       "Serviços": 6.13,
       "Serviços subjacentes": 6.53,
-      "Serviços inerciais": 7.0,
+      "Serviços inerciais": 7,
       "Serviços intensivos em trabalho": 6.19,
       "Serviços ex-passagem aérea": 6.15,
       "Serviços de alimentação fora do domicílio": 7.15,
@@ -4267,7 +4267,7 @@
       "Combustíveis": -6.74,
       "Energia elétrica": 8.92,
       "Livres": 3.75,
-      "Alimentação no domicílio": 0.0,
+      "Alimentação no domicílio": -0,
       "In natura": 13.52,
       "Industrializados": 3.9,
       "Ind Subjacente": 7.02,
@@ -4405,7 +4405,7 @@
       "9 - Comunicação": 3.51,
       "Livres ex-alimentos": 4.35,
       "Não duráveis": 0.94,
-      "Semiduráveis": 4.0,
+      "Semiduráveis": 4,
       "Duráveis": -0.55,
       "Tradables": 1.33,
       "Non-tradables": 4.92
@@ -4624,7 +4624,7 @@
       "Ex3": 3.19,
       "1 - Alimentação": 3.01,
       "2 - Habitação": 3.35,
-      "3 - Residência": -1.0,
+      "3 - Residência": -1,
       "4 - Vestuário": 2.85,
       "5 - Transportes": 3.82,
       "6 - Saúde": 5.65,
@@ -4662,7 +4662,7 @@
       "Ex3": 3.07,
       "1 - Alimentação": 4.55,
       "2 - Habitação": 3.01,
-      "3 - Residência": -1.0,
+      "3 - Residência": -1,
       "4 - Vestuário": 2.35,
       "5 - Transportes": 4.16,
       "6 - Saúde": 6.05,
@@ -4808,7 +4808,7 @@
       "Serviços inerciais": 5.67,
       "Serviços intensivos em trabalho": 5.25,
       "Serviços ex-passagem aérea": 4.98,
-      "Serviços de alimentação fora do domicílio": 5.0,
+      "Serviços de alimentação fora do domicílio": 5,
       "Passagem aérea": -21.07,
       "Ex0": 3.29,
       "Ex3": 3.6,
@@ -4888,7 +4888,7 @@
       "Passagem aérea": -22.15,
       "Ex0": 3.72,
       "Ex3": 4.16,
-      "1 - Alimentação": 8.0,
+      "1 - Alimentação": 8,
       "2 - Habitação": 3.44,
       "3 - Residência": 0.83,
       "4 - Vestuário": 2.25,
@@ -5027,7 +5027,7 @@
       "Combustíveis": 10.65,
       "Energia elétrica": 0.63,
       "Livres": 5.65,
-      "Alimentação no domicílio": 8.0,
+      "Alimentação no domicílio": 8,
       "In natura": -5.27,
       "Industrializados": 3.91,
       "Ind Subjacente": 3.4,
@@ -5089,8 +5089,8 @@
       "9 - Comunicação": 2.24,
       "Livres ex-alimentos": 4.62,
       "Não duráveis": 7.48,
-      "Semiduráveis": 3.0,
-      "Duráveis": 3.0,
+      "Semiduráveis": 3,
+      "Duráveis": 3,
       "Tradables": 7.2,
       "Non-tradables": 4.44
     },
@@ -5744,7 +5744,7 @@
     },
     {
       "data_date": "2021-01-15",
-      "IPCA15": 100.0,
+      "IPCA15": 100,
       "ex-combustíveis": 94.2126,
       "ex-alimentação": 78.9969,
       "Administrados": 25.4973,
@@ -6542,7 +6542,7 @@
     },
     {
       "data_date": "2022-10-15",
-      "IPCA15": 100.0,
+      "IPCA15": 100,
       "ex-combustíveis": 94.0774,
       "ex-alimentação": 78.189,
       "Administrados": 24.9294,
@@ -6770,7 +6770,7 @@
     },
     {
       "data_date": "2023-04-15",
-      "IPCA15": 100.0,
+      "IPCA15": 100,
       "ex-combustíveis": 94.198,
       "ex-alimentação": 78.3278,
       "Administrados": 25.0312,
@@ -6846,7 +6846,7 @@
     },
     {
       "data_date": "2023-06-15",
-      "IPCA15": 100.0,
+      "IPCA15": 100,
       "ex-combustíveis": 94.0908,
       "ex-alimentação": 78.3473,
       "Administrados": 25.3865,
@@ -7302,7 +7302,7 @@
     },
     {
       "data_date": "2024-06-15",
-      "IPCA15": 100.0,
+      "IPCA15": 100,
       "ex-combustíveis": 93.9897,
       "ex-alimentação": 78.4976,
       "Administrados": 25.9001,
@@ -7416,7 +7416,7 @@
     },
     {
       "data_date": "2024-09-15",
-      "IPCA15": 100.0,
+      "IPCA15": 100,
       "ex-combustíveis": 93.7636,
       "ex-alimentação": 78.7404,
       "Administrados": 26.1275,
@@ -7454,7 +7454,7 @@
     },
     {
       "data_date": "2024-10-15",
-      "IPCA15": 100.0,
+      "IPCA15": 100,
       "ex-combustíveis": 93.8116,
       "ex-alimentação": 78.7541,
       "Administrados": 26.135,
@@ -7985,363 +7985,11 @@
       "Non-tradables": 42.5331
     }
   ],
-  "difusao": [
-    {
-      "Difusao_Mensal": 49.86,
-      "Media_Historica": 60.65,
-      "data_date": "2020-02-01"
-    },
-    {
-      "Difusao_Mensal": 55.31,
-      "Media_Historica": 60.65,
-      "data_date": "2020-03-01"
-    },
-    {
-      "Difusao_Mensal": 51.5,
-      "Media_Historica": 60.65,
-      "data_date": "2020-04-01"
-    },
-    {
-      "Difusao_Mensal": 45.23,
-      "Media_Historica": 60.65,
-      "data_date": "2020-05-01"
-    },
-    {
-      "Difusao_Mensal": 47.14,
-      "Media_Historica": 60.65,
-      "data_date": "2020-06-01"
-    },
-    {
-      "Difusao_Mensal": 52.32,
-      "Media_Historica": 60.65,
-      "data_date": "2020-07-01"
-    },
-    {
-      "Difusao_Mensal": 52.59,
-      "Media_Historica": 60.65,
-      "data_date": "2020-08-01"
-    },
-    {
-      "Difusao_Mensal": 59.95,
-      "Media_Historica": 60.65,
-      "data_date": "2020-09-01"
-    },
-    {
-      "Difusao_Mensal": 64.03,
-      "Media_Historica": 60.65,
-      "data_date": "2020-10-01"
-    },
-    {
-      "Difusao_Mensal": 66.49,
-      "Media_Historica": 60.65,
-      "data_date": "2020-11-01"
-    },
-    {
-      "Difusao_Mensal": 63.22,
-      "Media_Historica": 60.65,
-      "data_date": "2020-12-01"
-    },
-    {
-      "Difusao_Mensal": 73.84,
-      "Media_Historica": 60.65,
-      "data_date": "2021-01-01"
-    },
-    {
-      "Difusao_Mensal": 62.4,
-      "Media_Historica": 60.65,
-      "data_date": "2021-02-01"
-    },
-    {
-      "Difusao_Mensal": 65.67,
-      "Media_Historica": 60.65,
-      "data_date": "2021-03-01"
-    },
-    {
-      "Difusao_Mensal": 61.04,
-      "Media_Historica": 60.65,
-      "data_date": "2021-04-01"
-    },
-    {
-      "Difusao_Mensal": 67.57,
-      "Media_Historica": 60.65,
-      "data_date": "2021-05-01"
-    },
-    {
-      "Difusao_Mensal": 65.67,
-      "Media_Historica": 60.65,
-      "data_date": "2021-06-01"
-    },
-    {
-      "Difusao_Mensal": 62.4,
-      "Media_Historica": 60.65,
-      "data_date": "2021-07-01"
-    },
-    {
-      "Difusao_Mensal": 73.3,
-      "Media_Historica": 60.65,
-      "data_date": "2021-08-01"
-    },
-    {
-      "Difusao_Mensal": 68.94,
-      "Media_Historica": 60.65,
-      "data_date": "2021-09-01"
-    },
-    {
-      "Difusao_Mensal": 63.76,
-      "Media_Historica": 60.65,
-      "data_date": "2021-10-01"
-    },
-    {
-      "Difusao_Mensal": 65.67,
-      "Media_Historica": 60.65,
-      "data_date": "2021-11-01"
-    },
-    {
-      "Difusao_Mensal": 68.94,
-      "Media_Historica": 60.65,
-      "data_date": "2021-12-01"
-    },
-    {
-      "Difusao_Mensal": 74.39,
-      "Media_Historica": 60.65,
-      "data_date": "2022-01-01"
-    },
-    {
-      "Difusao_Mensal": 69.48,
-      "Media_Historica": 60.65,
-      "data_date": "2022-02-01"
-    },
-    {
-      "Difusao_Mensal": 75.48,
-      "Media_Historica": 60.65,
-      "data_date": "2022-03-01"
-    },
-    {
-      "Difusao_Mensal": 78.75,
-      "Media_Historica": 60.65,
-      "data_date": "2022-04-01"
-    },
-    {
-      "Difusao_Mensal": 74.93,
-      "Media_Historica": 60.65,
-      "data_date": "2022-05-01"
-    },
-    {
-      "Difusao_Mensal": 68.94,
-      "Media_Historica": 60.65,
-      "data_date": "2022-06-01"
-    },
-    {
-      "Difusao_Mensal": 67.85,
-      "Media_Historica": 60.65,
-      "data_date": "2022-07-01"
-    },
-    {
-      "Difusao_Mensal": 65.12,
-      "Media_Historica": 60.65,
-      "data_date": "2022-08-01"
-    },
-    {
-      "Difusao_Mensal": 59.95,
-      "Media_Historica": 60.65,
-      "data_date": "2022-09-01"
-    },
-    {
-      "Difusao_Mensal": 62.67,
-      "Media_Historica": 60.65,
-      "data_date": "2022-10-01"
-    },
-    {
-      "Difusao_Mensal": 63.76,
-      "Media_Historica": 60.65,
-      "data_date": "2022-11-01"
-    },
-    {
-      "Difusao_Mensal": 65.67,
-      "Media_Historica": 60.65,
-      "data_date": "2022-12-01"
-    },
-    {
-      "Difusao_Mensal": 67.03,
-      "Media_Historica": 60.65,
-      "data_date": "2023-01-01"
-    },
-    {
-      "Difusao_Mensal": 67.03,
-      "Media_Historica": 60.65,
-      "data_date": "2023-02-01"
-    },
-    {
-      "Difusao_Mensal": 61.31,
-      "Media_Historica": 60.65,
-      "data_date": "2023-03-01"
-    },
-    {
-      "Difusao_Mensal": 63.22,
-      "Media_Historica": 60.65,
-      "data_date": "2023-04-01"
-    },
-    {
-      "Difusao_Mensal": 64.31,
-      "Media_Historica": 60.65,
-      "data_date": "2023-05-01"
-    },
-    {
-      "Difusao_Mensal": 50.68,
-      "Media_Historica": 60.65,
-      "data_date": "2023-06-01"
-    },
-    {
-      "Difusao_Mensal": 47.96,
-      "Media_Historica": 60.65,
-      "data_date": "2023-07-01"
-    },
-    {
-      "Difusao_Mensal": 50.95,
-      "Media_Historica": 60.65,
-      "data_date": "2023-08-01"
-    },
-    {
-      "Difusao_Mensal": 41.69,
-      "Media_Historica": 60.65,
-      "data_date": "2023-09-01"
-    },
-    {
-      "Difusao_Mensal": 47.14,
-      "Media_Historica": 60.65,
-      "data_date": "2023-10-01"
-    },
-    {
-      "Difusao_Mensal": 54.77,
-      "Media_Historica": 60.65,
-      "data_date": "2023-11-01"
-    },
-    {
-      "Difusao_Mensal": 55.86,
-      "Media_Historica": 60.65,
-      "data_date": "2023-12-01"
-    },
-    {
-      "Difusao_Mensal": 67.03,
-      "Media_Historica": 60.65,
-      "data_date": "2024-01-01"
-    },
-    {
-      "Difusao_Mensal": 60.49,
-      "Media_Historica": 60.65,
-      "data_date": "2024-02-01"
-    },
-    {
-      "Difusao_Mensal": 54.5,
-      "Media_Historica": 60.65,
-      "data_date": "2024-03-01"
-    },
-    {
-      "Difusao_Mensal": 54.22,
-      "Media_Historica": 60.65,
-      "data_date": "2024-04-01"
-    },
-    {
-      "Difusao_Mensal": 55.31,
-      "Media_Historica": 60.65,
-      "data_date": "2024-05-01"
-    },
-    {
-      "Difusao_Mensal": 56.95,
-      "Media_Historica": 60.65,
-      "data_date": "2024-06-01"
-    },
-    {
-      "Difusao_Mensal": 51.23,
-      "Media_Historica": 60.65,
-      "data_date": "2024-07-01"
-    },
-    {
-      "Difusao_Mensal": 53.13,
-      "Media_Historica": 60.65,
-      "data_date": "2024-08-01"
-    },
-    {
-      "Difusao_Mensal": 55.04,
-      "Media_Historica": 60.65,
-      "data_date": "2024-09-01"
-    },
-    {
-      "Difusao_Mensal": 58.31,
-      "Media_Historica": 60.65,
-      "data_date": "2024-10-01"
-    },
-    {
-      "Difusao_Mensal": 57.49,
-      "Media_Historica": 60.65,
-      "data_date": "2024-11-01"
-    },
-    {
-      "Difusao_Mensal": 61.85,
-      "Media_Historica": 60.65,
-      "data_date": "2024-12-01"
-    },
-    {
-      "Difusao_Mensal": 68.94,
-      "Media_Historica": 60.65,
-      "data_date": "2025-01-01"
-    },
-    {
-      "Difusao_Mensal": 65.12,
-      "Media_Historica": 60.65,
-      "data_date": "2025-02-01"
-    },
-    {
-      "Difusao_Mensal": 61.04,
-      "Media_Historica": 60.65,
-      "data_date": "2025-03-01"
-    },
-    {
-      "Difusao_Mensal": 67.85,
-      "Media_Historica": 60.65,
-      "data_date": "2025-04-01"
-    },
-    {
-      "Difusao_Mensal": 66.49,
-      "Media_Historica": 60.65,
-      "data_date": "2025-05-01"
-    },
-    {
-      "Difusao_Mensal": 57.77,
-      "Media_Historica": 60.65,
-      "data_date": "2025-06-01"
-    },
-    {
-      "Difusao_Mensal": 51.23,
-      "Media_Historica": 60.65,
-      "data_date": "2025-07-01"
-    },
-    {
-      "Difusao_Mensal": 57.22,
-      "Media_Historica": 60.65,
-      "data_date": "2025-08-01"
-    },
-    {
-      "Difusao_Mensal": 53.13,
-      "Media_Historica": 60.65,
-      "data_date": "2025-09-01"
-    },
-    {
-      "Difusao_Mensal": 50.95,
-      "Media_Historica": 60.65,
-      "data_date": "2025-10-01"
-    },
-    {
-      "Difusao_Mensal": 54.77,
-      "Media_Historica": 60.65,
-      "data_date": "2025-11-01"
-    }
-  ],
   "metadata": {
     "indicator": "IPCA-15",
     "description": "Índice Nacional de Preços ao Consumidor Amplo 15 - Prévia da inflação",
     "source": "IBGE/Sidra",
-    "last_updated": "2025-12-06T13:49:12.090353",
+    "last_updated": "2025-12-12T14:23:13",
     "frequency": "monthly"
   }
 }
