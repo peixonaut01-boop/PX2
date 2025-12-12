@@ -202,8 +202,9 @@ export default function IpcaPage() {
   // Chart data
   const chartDataA12 = prepareChartData("a12", 2020);
 
-  // Diffusion data
-  const difusaoBrutaData = (ipcaData.difusao_bruta as Record<string, unknown>[] | undefined)
+  // Diffusion data (optional - may not be present if diffusion Excel is missing)
+  const ipcaDataAny = ipcaData as Record<string, unknown>;
+  const difusaoBrutaData = (ipcaDataAny.difusao_bruta as Record<string, unknown>[] | undefined)
     ?.filter((row) => {
       const rowDate = parseDate(row.data_date as string);
       return rowDate >= parseDate("2020-01-01");
@@ -213,8 +214,7 @@ export default function IpcaPage() {
       mensal: row.Difusao_Mensal as number | null,
       referencia: row.Media_Historica as number | null,
     })) || [];
-
-  const difusaoDessazData = (ipcaData.difusao_dessaz as Record<string, unknown>[] | undefined)
+  const difusaoDessazData = (ipcaDataAny.difusao_dessaz as Record<string, unknown>[] | undefined)
     ?.filter((row) => {
       const rowDate = parseDate(row.data_date as string);
       return rowDate >= parseDate("2020-01-01");
