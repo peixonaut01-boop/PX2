@@ -42,6 +42,8 @@ message("=" %>% rep(70) %>% paste(collapse = ""))
 
 # Lista de scripts para executar
 scripts <- c(
+  "difusao_ipca.R",
+  "difusao_ipca15.R",
   "ipca_update.R",
   "ipca15_update.R",
   "pim_update.R",

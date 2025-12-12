@@ -51,7 +51,7 @@ jobs:
 
       - name: Install R Packages
         run: |
-          Rscript -e 'install.packages(c("jsonlite", "readxl", "dplyr", "lubridate", "curl", "purrr", "zoo"), repos="https://cloud.r-project.org")'
+          Rscript -e 'install.packages(c("jsonlite", "readxl", "dplyr", "lubridate", "curl", "purrr", "zoo", "writexl"), repos="https://cloud.r-project.org")'
 
       - name: Run ETL Scripts
         run: |

@@ -7985,11 +7985,363 @@
       "Non-tradables": 42.5331
     }
   ],
+  "difusao": [
+    {
+      "Difusao_Mensal": 49.86,
+      "Media_Historica": 60.65,
+      "data_date": "2020-02-15"
+    },
+    {
+      "Difusao_Mensal": 55.31,
+      "Media_Historica": 60.65,
+      "data_date": "2020-03-15"
+    },
+    {
+      "Difusao_Mensal": 51.5,
+      "Media_Historica": 60.65,
+      "data_date": "2020-04-15"
+    },
+    {
+      "Difusao_Mensal": 45.23,
+      "Media_Historica": 60.65,
+      "data_date": "2020-05-15"
+    },
+    {
+      "Difusao_Mensal": 47.14,
+      "Media_Historica": 60.65,
+      "data_date": "2020-06-15"
+    },
+    {
+      "Difusao_Mensal": 52.32,
+      "Media_Historica": 60.65,
+      "data_date": "2020-07-15"
+    },
+    {
+      "Difusao_Mensal": 52.59,
+      "Media_Historica": 60.65,
+      "data_date": "2020-08-15"
+    },
+    {
+      "Difusao_Mensal": 59.95,
+      "Media_Historica": 60.65,
+      "data_date": "2020-09-15"
+    },
+    {
+      "Difusao_Mensal": 64.03,
+      "Media_Historica": 60.65,
+      "data_date": "2020-10-15"
+    },
+    {
+      "Difusao_Mensal": 66.49,
+      "Media_Historica": 60.65,
+      "data_date": "2020-11-15"
+    },
+    {
+      "Difusao_Mensal": 63.22,
+      "Media_Historica": 60.65,
+      "data_date": "2020-12-15"
+    },
+    {
+      "Difusao_Mensal": 73.84,
+      "Media_Historica": 60.65,
+      "data_date": "2021-01-15"
+    },
+    {
+      "Difusao_Mensal": 62.4,
+      "Media_Historica": 60.65,
+      "data_date": "2021-02-15"
+    },
+    {
+      "Difusao_Mensal": 65.67,
+      "Media_Historica": 60.65,
+      "data_date": "2021-03-15"
+    },
+    {
+      "Difusao_Mensal": 61.04,
+      "Media_Historica": 60.65,
+      "data_date": "2021-04-15"
+    },
+    {
+      "Difusao_Mensal": 67.57,
+      "Media_Historica": 60.65,
+      "data_date": "2021-05-15"
+    },
+    {
+      "Difusao_Mensal": 65.67,
+      "Media_Historica": 60.65,
+      "data_date": "2021-06-15"
+    },
+    {
+      "Difusao_Mensal": 62.4,
+      "Media_Historica": 60.65,
+      "data_date": "2021-07-15"
+    },
+    {
+      "Difusao_Mensal": 73.3,
+      "Media_Historica": 60.65,
+      "data_date": "2021-08-15"
+    },
+    {
+      "Difusao_Mensal": 68.94,
+      "Media_Historica": 60.65,
+      "data_date": "2021-09-15"
+    },
+    {
+      "Difusao_Mensal": 63.76,
+      "Media_Historica": 60.65,
+      "data_date": "2021-10-15"
+    },
+    {
+      "Difusao_Mensal": 65.67,
+      "Media_Historica": 60.65,
+      "data_date": "2021-11-15"
+    },
+    {
+      "Difusao_Mensal": 68.94,
+      "Media_Historica": 60.65,
+      "data_date": "2021-12-15"
+    },
+    {
+      "Difusao_Mensal": 74.39,
+      "Media_Historica": 60.65,
+      "data_date": "2022-01-15"
+    },
+    {
+      "Difusao_Mensal": 69.48,
+      "Media_Historica": 60.65,
+      "data_date": "2022-02-15"
+    },
+    {
+      "Difusao_Mensal": 75.48,
+      "Media_Historica": 60.65,
+      "data_date": "2022-03-15"
+    },
+    {
+      "Difusao_Mensal": 78.75,
+      "Media_Historica": 60.65,
+      "data_date": "2022-04-15"
+    },
+    {
+      "Difusao_Mensal": 74.93,
+      "Media_Historica": 60.65,
+      "data_date": "2022-05-15"
+    },
+    {
+      "Difusao_Mensal": 68.94,
+      "Media_Historica": 60.65,
+      "data_date": "2022-06-15"
+    },
+    {
+      "Difusao_Mensal": 67.85,
+      "Media_Historica": 60.65,
+      "data_date": "2022-07-15"
+    },
+    {
+      "Difusao_Mensal": 65.12,
+      "Media_Historica": 60.65,
+      "data_date": "2022-08-15"
+    },
+    {
+      "Difusao_Mensal": 59.95,
+      "Media_Historica": 60.65,
+      "data_date": "2022-09-15"
+    },
+    {
+      "Difusao_Mensal": 62.67,
+      "Media_Historica": 60.65,
+      "data_date": "2022-10-15"
+    },
+    {
+      "Difusao_Mensal": 63.76,
+      "Media_Historica": 60.65,
+      "data_date": "2022-11-15"
+    },
+    {
+      "Difusao_Mensal": 65.67,
+      "Media_Historica": 60.65,
+      "data_date": "2022-12-15"
+    },
+    {
+      "Difusao_Mensal": 67.03,
+      "Media_Historica": 60.65,
+      "data_date": "2023-01-15"
+    },
+    {
+      "Difusao_Mensal": 67.03,
+      "Media_Historica": 60.65,
+      "data_date": "2023-02-15"
+    },
+    {
+      "Difusao_Mensal": 61.31,
+      "Media_Historica": 60.65,
+      "data_date": "2023-03-15"
+    },
+    {
+      "Difusao_Mensal": 63.22,
+      "Media_Historica": 60.65,
+      "data_date": "2023-04-15"
+    },
+    {
+      "Difusao_Mensal": 64.31,
+      "Media_Historica": 60.65,
+      "data_date": "2023-05-15"
+    },
+    {
+      "Difusao_Mensal": 50.68,
+      "Media_Historica": 60.65,
+      "data_date": "2023-06-15"
+    },
+    {
+      "Difusao_Mensal": 47.96,
+      "Media_Historica": 60.65,
+      "data_date": "2023-07-15"
+    },
+    {
+      "Difusao_Mensal": 50.95,
+      "Media_Historica": 60.65,
+      "data_date": "2023-08-15"
+    },
+    {
+      "Difusao_Mensal": 41.69,
+      "Media_Historica": 60.65,
+      "data_date": "2023-09-15"
+    },
+    {
+      "Difusao_Mensal": 47.14,
+      "Media_Historica": 60.65,
+      "data_date": "2023-10-15"
+    },
+    {
+      "Difusao_Mensal": 54.77,
+      "Media_Historica": 60.65,
+      "data_date": "2023-11-15"
+    },
+    {
+      "Difusao_Mensal": 55.86,
+      "Media_Historica": 60.65,
+      "data_date": "2023-12-15"
+    },
+    {
+      "Difusao_Mensal": 67.03,
+      "Media_Historica": 60.65,
+      "data_date": "2024-01-15"
+    },
+    {
+      "Difusao_Mensal": 60.49,
+      "Media_Historica": 60.65,
+      "data_date": "2024-02-15"
+    },
+    {
+      "Difusao_Mensal": 54.5,
+      "Media_Historica": 60.65,
+      "data_date": "2024-03-15"
+    },
+    {
+      "Difusao_Mensal": 54.22,
+      "Media_Historica": 60.65,
+      "data_date": "2024-04-15"
+    },
+    {
+      "Difusao_Mensal": 55.31,
+      "Media_Historica": 60.65,
+      "data_date": "2024-05-15"
+    },
+    {
+      "Difusao_Mensal": 56.95,
+      "Media_Historica": 60.65,
+      "data_date": "2024-06-15"
+    },
+    {
+      "Difusao_Mensal": 51.23,
+      "Media_Historica": 60.65,
+      "data_date": "2024-07-15"
+    },
+    {
+      "Difusao_Mensal": 53.13,
+      "Media_Historica": 60.65,
+      "data_date": "2024-08-15"
+    },
+    {
+      "Difusao_Mensal": 55.04,
+      "Media_Historica": 60.65,
+      "data_date": "2024-09-15"
+    },
+    {
+      "Difusao_Mensal": 58.31,
+      "Media_Historica": 60.65,
+      "data_date": "2024-10-15"
+    },
+    {
+      "Difusao_Mensal": 57.49,
+      "Media_Historica": 60.65,
+      "data_date": "2024-11-15"
+    },
+    {
+      "Difusao_Mensal": 61.85,
+      "Media_Historica": 60.65,
+      "data_date": "2024-12-15"
+    },
+    {
+      "Difusao_Mensal": 68.94,
+      "Media_Historica": 60.65,
+      "data_date": "2025-01-15"
+    },
+    {
+      "Difusao_Mensal": 65.12,
+      "Media_Historica": 60.65,
+      "data_date": "2025-02-15"
+    },
+    {
+      "Difusao_Mensal": 61.04,
+      "Media_Historica": 60.65,
+      "data_date": "2025-03-15"
+    },
+    {
+      "Difusao_Mensal": 67.85,
+      "Media_Historica": 60.65,
+      "data_date": "2025-04-15"
+    },
+    {
+      "Difusao_Mensal": 66.49,
+      "Media_Historica": 60.65,
+      "data_date": "2025-05-15"
+    },
+    {
+      "Difusao_Mensal": 57.77,
+      "Media_Historica": 60.65,
+      "data_date": "2025-06-15"
+    },
+    {
+      "Difusao_Mensal": 51.23,
+      "Media_Historica": 60.65,
+      "data_date": "2025-07-15"
+    },
+    {
+      "Difusao_Mensal": 57.22,
+      "Media_Historica": 60.65,
+      "data_date": "2025-08-15"
+    },
+    {
+      "Difusao_Mensal": 53.13,
+      "Media_Historica": 60.65,
+      "data_date": "2025-09-15"
+    },
+    {
+      "Difusao_Mensal": 50.95,
+      "Media_Historica": 60.65,
+      "data_date": "2025-10-15"
+    },
+    {
+      "Difusao_Mensal": 54.77,
+      "Media_Historica": 60.65,
+      "data_date": "2025-11-15"
+    }
+  ],
   "metadata": {
     "indicator": "IPCA-15",
     "description": "Índice Nacional de Preços ao Consumidor Amplo 15 - Prévia da inflação",
     "source": "IBGE/Sidra",
-    "last_updated": "2025-12-12T14:23:13",
+    "last_updated": "2025-12-12T14:43:06",
     "frequency": "monthly"
   }
 }
