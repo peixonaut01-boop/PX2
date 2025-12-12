@@ -32,7 +32,7 @@ def get_month_name(date_str):
         '05': 'maio', '06': 'junho', '07': 'julho', '08': 'agosto',
         '09': 'setembro', '10': 'outubro', '11': 'novembro', '12': 'dezembro'
     }
-    _, month, year = date_str.split('-')
+    year, month, _ = date_str.split('-')
     return f"{months.get(month, '')} de {year}"
 
 def clean_float(val):
