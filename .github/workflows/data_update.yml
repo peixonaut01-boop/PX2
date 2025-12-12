@@ -3,6 +3,11 @@ name: Data Update ETL
 on:
   schedule:
     # 09:30 AM BRT (12:30 UTC) - Checking later due to API latency
+    # 09:01, 09:02, 09:03 AM BRT (12:01-03 UTC) - Triple Trigger for immediate detection
+    - cron: '1 12 * * *'
+    - cron: '2 12 * * *'
+    - cron: '3 12 * * *'
+    # 09:30 AM BRT (12:30 UTC) - Safety buffer
     - cron: '30 12 * * *'
   workflow_dispatch: # Allow manual trigger
 
