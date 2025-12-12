@@ -4,10 +4,15 @@ on:
   schedule:
     # 09:30 AM BRT (12:30 UTC) - Checking later due to API latency
     # 09:01, 09:02, 09:03 AM BRT (12:01-03 UTC) - Triple Trigger for immediate detection
+    # 09:00 AM BRT (12:00 UTC) - Exact release time target
+    - cron: '0 12 * * *'
+    # 09:01, 09:02 AM BRT (12:01-02 UTC) - Immediate retries for latency
     - cron: '1 12 * * *'
     - cron: '2 12 * * *'
-    - cron: '3 12 * * *'
-    # 09:30 AM BRT (12:30 UTC) - Safety buffer
+    # 09:05, 09:10 AM BRT (12:05-10 UTC) - Short delay catch-up
+    - cron: '5 12 * * *'
+    - cron: '10 12 * * *'
+    # 09:30 AM BRT (12:30 UTC) - Safety buffer for significant delays
     - cron: '30 12 * * *'
   workflow_dispatch: # Allow manual trigger
 
