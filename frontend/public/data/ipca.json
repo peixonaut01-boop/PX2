@@ -8817,7 +8817,7 @@
     "indicator": "IPCA",
     "description": "Índice Nacional de Preços ao Consumidor Amplo - Inflação oficial do Brasil",
     "source": "IBGE/Sidra",
-    "last_updated": "2025-12-13T13:24:45",
+    "last_updated": "2025-12-13T13:39:19",
     "frequency": "monthly"
   }
 }

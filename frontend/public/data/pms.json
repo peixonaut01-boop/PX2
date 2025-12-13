@@ -22795,7 +22795,7 @@
     "indicator": "PMS",
     "description": "Pesquisa Mensal de Serviços (IBGE) - Volume de Serviços",
     "source": "IBGE/Sidra",
-    "last_updated": "2025-12-13T13:27:54",
+    "last_updated": "2025-12-13T13:42:28",
     "frequency": "monthly"
   }
 }
